@@ -4,20 +4,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 
+# upsampling by repeating an element in map_in several times to map_out
 def upsample(map_in, map_dim_width=40, map_dim_height=40):
     map_height, map_width = map_in.shape
-    map_out = np.zeros(shape=(map_dim_height, map_dim_width))
-    patch_width = map_dim_width // map_width
     patch_height = map_dim_height // map_height
-
-    for y in range(map_height):
-        for x in range(map_width):
-            for patch_y in range(patch_height):
-                for patch_x in range(patch_width):
-                    map_out[y*patch_height + patch_y][x * patch_width + patch_x] = map_in[y][x]
+    patch_width = map_dim_width // map_width
+    repeated = np.repeat(np.repeat(map_in, patch_height, axis=0), patch_width, axis=1)
     
+    map_out = np.zeros((map_dim_height, map_dim_width))
+    copy_h = min(repeated.shape[0], map_dim_height)
+    copy_w = min(repeated.shape[1], map_dim_width)
+    map_out[:copy_h, :copy_w] = repeated[:copy_h, :copy_w]
     return map_out
 
+# downsample by max pooling
 def downsample(map_in, map_dim_width=60, map_dim_height=40):
     map_height, map_width = map_in.shape
     map_out = np.zeros(shape=(map_dim_height, map_dim_width))
@@ -54,10 +54,9 @@ def load_bmp_to_map(bmp_path, map_dim_width=40, map_dim_height=40):
 
     print(resulting_map.shape)
 
-    pass
-    # return map_abstraction (guessing it's a 2d matrix, subsampled accordingly)
+    return resulting_map
 
 load_bmp_to_map("./map_bmps/map1.bmp")
 load_bmp_to_map("./map_bmps/map2.bmp")
 load_bmp_to_map("./map_bmps/map3.bmp")
-load_bmp_to_map("./map_bmps/map4.bmpgi")
+load_bmp_to_map("./map_bmps/map4.bmp")
