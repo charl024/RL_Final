@@ -8,37 +8,44 @@ from PIL import Image
 def upsample(map_in, map_dim_width=40, map_dim_height=40):
     map_height, map_width = map_in.shape
     map_out = np.zeros(shape=(map_dim_height, map_dim_width))
-    patch_width = map_dim_width // map_width
-    patch_height = map_dim_height // map_height
+    patch_width = map_dim_width / map_width
+    patch_height = map_dim_height / map_height
 
     for y in range(map_height):
         for x in range(map_width):
-            for patch_y in range(patch_height):
-                for patch_x in range(patch_width):
-                    map_out[y*patch_height + patch_y][x * patch_width + patch_x] = map_in[y][x]
+            # do sum clampin'
+            y_start = int(y * patch_height)
+            y_end   = min(int((y + 1) * patch_height), map_dim_height)
+            x_start = int(x * patch_width)
+            x_end   = min(int((x + 1) * patch_width), map_dim_width)
+
+            map_out[y_start:y_end, x_start:x_end] = map_in[y][x]
     
     return map_out
 
-# downsample by max pooling
+# downsample by min pooling
 def downsample(map_in, map_dim_width=60, map_dim_height=40):
     map_height, map_width = map_in.shape
     map_out = np.zeros(shape=(map_dim_height, map_dim_width))
-    patch_width = map_width // map_dim_width
-    patch_height = map_height // map_dim_height
+    patch_width = map_width / map_dim_width
+    patch_height = map_height / map_dim_height
 
     for y in range(map_dim_height):
         for x in range(map_dim_width):
-            min_val = 255
-            for patch_y in range(patch_height):
-                for patch_x in range(patch_width):
-                    val = map_in[y * patch_height + patch_y][x * patch_width + patch_x]
-                    min_val = min(min_val, val)
-            map_out[y][x] = min_val
+            # do sum clampin'
+            y_start = int(y * patch_height)
+            y_end   = min(int((y + 1) * patch_height), map_height)
+            x_start = int(x * patch_width)
+            x_end   = min(int((x + 1) * patch_width), map_width)
+
+            patch = map_in[y_start:y_end, x_start:x_end]
+            map_out[y][x] = patch.min()
+
 
     return map_out
 
 
-def load_bmp_to_map(bmp_path, map_dim_width=40, map_dim_height=40):
+def load_bmp_to_map(bmp_path, map_dim_width=400, map_dim_height=400):
     bmp_img = Image.open(bmp_path).convert("L")
     bmp_arr = np.array(bmp_img)
     img_height, img_width = bmp_arr.shape
@@ -60,6 +67,8 @@ def load_bmp_to_map(bmp_path, map_dim_width=40, map_dim_height=40):
     return resulting_map
 
 # load_bmp_to_map("./map_bmps/map1.bmp")
-load_bmp_to_map("./map_bmps/map2.bmp")
-load_bmp_to_map("./map_bmps/map3.bmp")
-load_bmp_to_map("./map_bmps/map4.bmp")
+# load_bmp_to_map("./map_bmps/map2.bmp")
+# load_bmp_to_map("./map_bmps/map3.bmp")
+# load_bmp_to_map("./map_bmps/map4.bmp")
+load_bmp_to_map("./map_bmps/spiral.bmp")
+load_bmp_to_map("./map_bmps/hi.bmp")
