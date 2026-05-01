@@ -7,14 +7,16 @@ from PIL import Image
 # upsampling by repeating an element in map_in several times to map_out
 def upsample(map_in, map_dim_width=40, map_dim_height=40):
     map_height, map_width = map_in.shape
-    patch_height = map_dim_height // map_height
+    map_out = np.zeros(shape=(map_dim_height, map_dim_width))
     patch_width = map_dim_width // map_width
-    repeated = np.repeat(np.repeat(map_in, patch_height, axis=0), patch_width, axis=1)
+    patch_height = map_dim_height // map_height
+
+    for y in range(map_height):
+        for x in range(map_width):
+            for patch_y in range(patch_height):
+                for patch_x in range(patch_width):
+                    map_out[y*patch_height + patch_y][x * patch_width + patch_x] = map_in[y][x]
     
-    map_out = np.zeros((map_dim_height, map_dim_width))
-    copy_h = min(repeated.shape[0], map_dim_height)
-    copy_w = min(repeated.shape[1], map_dim_width)
-    map_out[:copy_h, :copy_w] = repeated[:copy_h, :copy_w]
     return map_out
 
 # downsample by max pooling
