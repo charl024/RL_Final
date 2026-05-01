@@ -49,14 +49,14 @@ def load_bmp_to_map(bmp_path, map_dim_width=40, map_dim_height=40):
 
     # print(bmp_arr)
 
-    plt.imshow(resulting_map)
-    plt.show()
+    # plt.imshow(resulting_map)
+    # plt.show()
 
     print(resulting_map.shape)
 
     return resulting_map
 
-load_bmp_to_map("./map_bmps/map1.bmp")
-load_bmp_to_map("./map_bmps/map2.bmp")
-load_bmp_to_map("./map_bmps/map3.bmp")
-load_bmp_to_map("./map_bmps/map4.bmp")
+# load_bmp_to_map("./map_bmps/map1.bmp")
+# load_bmp_to_map("./map_bmps/map2.bmp")
+# load_bmp_to_map("./map_bmps/map3.bmp")
+# load_bmp_to_map("./map_bmps/map4.bmp")
