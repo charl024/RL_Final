@@ -68,6 +68,7 @@ class Environment():
             # print("target hit")
         else:
             reward = self.reward_strategy("move")
+            #TODO: implement manhattan distance?
             # print("moved to new position")
         
         return (nx, ny), reward
