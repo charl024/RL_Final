@@ -159,7 +159,7 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
 """
 PROBLEM 6 PART 2
 """
-def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
+def test_exploration_rate(map=["map4"]):
     """
     Exploration Rate. Let us choose the abstraction of Map 4 and evaluate the
     performance of SARSA with 3 exploration probabilities: ε = 0, 0.5, 1. Do the
@@ -180,26 +180,26 @@ def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
 
     epsilon_values = [0, 0.5, 1]
 
-    environments = create_environments(maps=maps)
+    environments = create_environments(maps=map)
 
     sarsa_dict = {}
     q_learn_dict = {}
-    
-    for i, env in enumerate(environments):
+
+    if (len(environments) > 1):
+        raise ValueError("test exploration meant for a single map")
+    for env in environments:
         for epsilon in epsilon_values:
             kwargs["epsilon"] = epsilon
-            map = maps[i]
-            key = (map, epsilon)
 
             # Track performance of SARSA on this map
-            sarsa_dict[key] = eval_performance(
+            sarsa_dict[epsilon] = eval_performance(
                 environment=env,
                 training_funct=dummy_training_function, #TODO: replace with train_sarsa
                 kwargs=kwargs,
             )
 
             # Track performance of Q-Learning on this map
-            q_learn_dict[key] = eval_performance(
+            q_learn_dict[epsilon] = eval_performance(
                 environment=env,
                 training_funct=dummy_training_function, #TODO: replace with train_q_learning
                 kwargs=kwargs,
@@ -210,7 +210,7 @@ def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
 """
 PROBLEM 6 PART 3
 """
-def test_discount_value(maps=["map1", "map2", "map3", "map4"]):
+def test_discount_value(maps=["map4"]):
     """
     Discount Value. We still consider the abstraction of Map 4 and evaluate the 
     performance of SARSA with 3 discount values: gamma = 0.1, 0.5, 1. Do the same 
@@ -236,27 +236,52 @@ def test_discount_value(maps=["map1", "map2", "map3", "map4"]):
     sarsa_dict = {}
     q_learn_dict = {}
     
-    for i, env in enumerate(environments):
+    if (len(environments) > 1):
+        raise ValueError("test exploration meant for a single map")
+    for env in environments:
         for gamma in gamma_values:
             kwargs["gamma"] = gamma
-            map = maps[i]
-            key = (map, gamma)
 
             # Track performance of SARSA on this map
-            sarsa_dict[key] = eval_performance(
+            sarsa_dict[gamma] = eval_performance(
                 environment=env,
                 training_funct=dummy_training_function, #TODO: replace with train_sarsa
                 kwargs=kwargs,
             )
 
             # Track performance of Q-Learning on this map
-            q_learn_dict[key] = eval_performance(
+            q_learn_dict[gamma] = eval_performance(
                 environment=env,
                 training_funct=dummy_training_function, #TODO: replace with train_q_learning
                 kwargs=kwargs,
                 )
 
     return sarsa_dict, q_learn_dict
+
+def test_reward_strategy(maps=["map1", "map2", "map3", "map4"]):
+    """
+    Reward Strategy. For each learning process, please use the values of ε and 
+    gamma that have the best performance in the previous comparisons. Then, 
+    compare the performance of the learning process based on S1 and S2.
+    """
+    pass
+
+def get_best_acc(dict):
+    """
+    Get the best performing hyperparameter (for tests 2, 3, and 4)
+    """
+    best_acc = 0
+    best_param_val = 0
+
+    for key, value in dict.items():
+        _, _, acc = value
+        if acc > best_acc:
+            best_acc = acc
+            best_param_val = key
+
+    return (best_param_val, best_acc)
+
+
 
 def run_q_learning():
     pass
@@ -273,10 +298,16 @@ if __name__ == "__main__":
     maps = ["map1", "map2", "map3", "map4", "hi", "spiral"]
 
     print("Testing Map Complexity...")
-    print(test_map_complexity(maps=maps))
+    sarsa_dict, q_dict = test_map_complexity(maps=maps)
+    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
+    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
 
     print("Testing Exploration Rate...")
-    print(test_exploration_rate(maps=maps))
+    sarsa_dict, q_dict = test_exploration_rate()
+    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
+    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
 
     print("Testing Discount Value...")
-    print(test_discount_value(maps=maps))
+    sarsa_dict, q_dict = test_discount_value()
+    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
+    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
