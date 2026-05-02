@@ -45,9 +45,11 @@ class Environment():
             x >= self.width or 
             y < 0 or 
             y >= self.height):
-            raise ValueError(f"Invalid state: {state} is out of bounds for map of shape {self.map.shape}")
+            # raise ValueError(f"Invalid state: {state} is out of bounds for map of shape {self.map.shape}")
+            return None, None
         if (action < 0 or action >= len(self.actions)):
-            raise ValueError(f"Invalid action: {action} not in range [0, {len(self.actions) - 1}]")
+            # raise ValueError(f"Invalid action: {action} not in range [0, {len(self.actions) - 1}]")
+            return None, None
 
         # define new state w action
         dx, dy = self.actions[action]
@@ -58,14 +60,19 @@ class Environment():
             # out of bounds, return current state and some negative reward
             reward = self.reward_strategy("boundary")
             # print("boundary hit")
+            return (x, y), reward
+
         elif (self.map[ny][nx] == 0):
             # check obstacle: 0 value in map means obstacle
             reward = self.reward_strategy("obstacle")
             # print("obstacle hit")
+            return (x, y), reward
+
         elif (nx, ny) == self.target_position:
             # check target reached
             reward = self.reward_strategy("target")
             # print("target hit")
+
         else:
             reward = self.reward_strategy("move")
             #TODO: implement manhattan distance?
