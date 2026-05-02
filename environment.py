@@ -1,6 +1,7 @@
 # Environment class
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Environment():
     # map_abstraction - 2d array
@@ -13,6 +14,8 @@ class Environment():
 
         self.height = self.map.shape[0]
         self.width  = self.map.shape[1]
+
+        self.visited_map = np.zeros(shape=(self.height, self.width))
 
         # list of actions an agent can perform in the environment
         self.actions = [
@@ -40,6 +43,10 @@ class Environment():
         x, y = state
         return self.map[y][x] == 0
     
+    def is_visited(self, state):
+        x, y = state
+        return self.visited_map[y][x] == 1
+
     # state - position in map
     # action - some way to choose a specific action from actions (integer value, idx)
     # reward_strategy - some reward function we can define 
@@ -59,6 +66,8 @@ class Environment():
         dx, dy = self.actions[action]
         nx = x + dx
         ny = y + dy
+
+        self.visited_map[y][x] = 1
         
         if (nx < 0 or nx >= self.width or ny < 0 or ny >= self.height):
             # out of bounds, return current state and some negative reward
@@ -76,13 +85,19 @@ class Environment():
             # check target reached
             reward = self.reward_strategy("target")
             # print("target hit")
+        
+        elif (self.is_visited((nx, ny))):
+            reward = self.reward_strategy("visited")
 
         else:
-            reward = self.reward_strategy("move")
-            #TODO: implement manhattan distance?
-            # print("moved to new position")
+            tx, ty = self.target_position
+            dist = abs(nx - tx) + abs(ny - ty)
+            reward = self.reward_strategy(dist)
         
         return (nx, ny), reward
+
+    def reset_visited(self):
+        self.visited_map = np.zeros(shape=(self.height, self.width))
 
     def plot(self):
         plt.imshow(self.map, cmap="gray_r")
