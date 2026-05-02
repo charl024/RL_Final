@@ -258,12 +258,18 @@ def test_discount_value(maps=["map4"]):
 
     return sarsa_dict, q_learn_dict
 
-def test_reward_strategy(maps=["map1", "map2", "map3", "map4"]):
+"""
+PROBLEM 6 PART 4
+"""
+def test_reward_strategy(maps=["map4"]):
     """
     Reward Strategy. For each learning process, please use the values of ε and 
     gamma that have the best performance in the previous comparisons. Then, 
     compare the performance of the learning process based on S1 and S2.
+
+    TODO: should we use different map here? 
     """
+    #TODO
     pass
 
 def get_best_acc(dict):
