@@ -14,9 +14,9 @@ class Environment():
         # list of actions an agent can perform in the environment
         self.actions = [
             # (x, y)
-            (0, 1),  # North, 0, Up
+            (0, 1),  # South, 0, Down
             (1, 0),  # East,  1, Right
-            (0, -1), # South, 2, Down
+            (0, -1), # North, 2, Up
             (-1, 0), # West,  3, Left
         ]
     def __repr__(self) -> str:
@@ -69,8 +69,29 @@ class Environment():
 # import reward_strategy
 # env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
 # print(env)
-# env.plot()
+# # env.plot()
+
+
+# # (x, y)
+# # (0, 1),  # South, 0, Down
+# # (1, 0),  # East,  1, Right
+# # (0, -1), # North, 2, Up
+# # (-1, 0), # West,  3, Left
+
+# # "barier"
+# print("barrier")
+# print(env.update((0,0),  3)) # Left out of bound
+# print(env.update((0,0),  2)) # Up out of bound
+# print(env.update((39,39),  1)) # Right out of bound
+# print(env.update((39,39),  0)) # Bottom out of bounds
+# print(env.update((4,1), 0)) # obstacle
+
+# # "move"
+# print("move")
 # print(env.update((0,0),  1))
 # print(env.update((25,4), 1))
+
+# # "target"
+# print("target")
 # print(env.update((24,5), 1))
 # print(env.update((25,6), 2))
