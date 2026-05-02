@@ -54,14 +54,12 @@ class Agent():
         # state - (x, y) position in map
         # action - integer value representing an action to take
         # RETURN - new state, reward
+        
         new_state, reward = self.environment.update(state, action)
 
         x, y = state
 
-        # Update q_table based on reward received and new state
-        self.q_table[y, x, action] += reward
-
-        return new_state, reward
+        return new_state, reward, action
 
     def explore(self, state):
         # randomly choose an action to perform
