@@ -36,6 +36,10 @@ class Environment():
             string.append("\n")
         return "".join(string)
     
+    def in_boundary(self, state):
+        x, y = state
+        return self.map[y][x] == 0
+    
     # state - position in map
     # action - some way to choose a specific action from actions (integer value, idx)
     # reward_strategy - some reward function we can define 
@@ -62,7 +66,7 @@ class Environment():
             # print("boundary hit")
             return (x, y), reward
 
-        elif (self.map[ny][nx] == 0):
+        elif (self.in_boundary((nx, ny))):
             # check obstacle: 0 value in map means obstacle
             reward = self.reward_strategy("obstacle")
             # print("obstacle hit")
@@ -89,67 +93,67 @@ class Environment():
         plt.title("Environment Map")
         plt.show()
 
-# import map_abstraction
-# import reward_strategy
-# import numpy as np
-# env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
-# # env = Environment(map_abstraction=np.zeros((41, 40)), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
-# print(env)
-# # env.plot()
+import map_abstraction
+import reward_strategy
+import numpy as np
+env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
+# env = Environment(map_abstraction=np.zeros((41, 40)), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
+print(env)
+# env.plot()
 
-# # (x, y)
-# # (0, 1),  # South, 0, Down
-# # (1, 0),  # East,  1, Right
-# # (0, -1), # North, 2, Up
-# # (-1, 0), # West,  3, Left
+# (x, y)
+# (0, 1),  # South, 0, Down
+# (1, 0),  # East,  1, Right
+# (0, -1), # North, 2, Up
+# (-1, 0), # West,  3, Left
 
-# # "barier"
-# print("barrier")
-# print(env.update((0,0),  3)) # Left out of bound
-# print(env.update((0,0),  2)) # Up out of bound
-# print(env.update((39,39),  1)) # Right out of bound
-# print(env.update((39,39),  0)) # Bottom out of bounds
-# print(env.update((4,1), 0)) # obstacle
+# "barier"
+print("barrier")
+print(env.update((0,0),  3)) # Left out of bound
+print(env.update((0,0),  2)) # Up out of bound
+print(env.update((39,39),  1)) # Right out of bound
+print(env.update((39,39),  0)) # Bottom out of bounds
+print(env.update((4,1), 0)) # obstacle
 
-# # "move"
-# print("move")
-# print(env.update((0,0),  1))
-# print(env.update((25,4), 1))
+# "move"
+print("move")
+print(env.update((0,0),  1))
+print(env.update((25,4), 1))
 
-# # "target"
-# print("target")
-# print(env.update((24,5), 1))
-# print(env.update((25,6), 2))
+# "target"
+print("target")
+print(env.update((24,5), 1))
+print(env.update((25,6), 2))
 
-# # Error cases
-# print("error cases")
+# Error cases
+print("error cases")
 
-# # invalid actions
-# try:    
-#     print(env.update((0,0), 4)) 
-# except ValueError as e: 
-#     print(e)
-# try:    
-#     print(env.update((0,0), -1)) 
-# except ValueError as e: 
-#     print(e)
+# invalid actions
+try:    
+    print(env.update((0,0), 4)) 
+except ValueError as e: 
+    print(e)
+try:    
+    print(env.update((0,0), -1)) 
+except ValueError as e: 
+    print(e)
 
 
-# # invalid start states
-# try:    
-#     print(env.update((40,39), 0))  
-# except ValueError as e: 
-#     print(e)
-# try:    
-#     print(env.update((39,40), 0))  
-# except ValueError as e: 
-#     print(e)
-# try:    
-#     print(env.update((0,-1),  0))    
-# except ValueError as e: 
-#     print(e)
-# try:    
-#     print(env.update((-1,0),  0))    
-# except ValueError as e: 
-#     print(e)
+# invalid start states
+try:    
+    print(env.update((40,39), 0))  
+except ValueError as e: 
+    print(e)
+try:    
+    print(env.update((39,40), 0))  
+except ValueError as e: 
+    print(e)
+try:    
+    print(env.update((0,-1),  0))    
+except ValueError as e: 
+    print(e)
+try:    
+    print(env.update((-1,0),  0))    
+except ValueError as e: 
+    print(e)
   
