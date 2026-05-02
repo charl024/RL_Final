@@ -10,15 +10,6 @@ from reward_strategy import reward_strategy_simple
 
 TARGET_POSITION = (21, 23)
 
-KWARGS = {
-    "episodes": 1000, # max number of episodes
-    "rng": np.random.default_rng(seed=123),
-    "epsilon": 0.5,
-    "gamma": 0.5,
-    "alpha": 0.5,
-    "max_steps": 100, # max size of an episode
-}
-
 def test_acc(agent, environment):
     """
     Test the accuracy of the agent's learned policy by generating a path from 
@@ -107,6 +98,10 @@ def create_environments(maps, root_bmp_path="./map_bmps/"):
                     for m in map_abstractions]
     return environments
 
+
+"""
+PROBLEM 6 PART 1
+"""
 def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
     """
     compare the performance of SARSA & Q-learning with the same hyperparameters 
@@ -120,7 +115,14 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
     """
 
     # hyperparameters for both algorithms
-    kwargs = KWARGS
+    kwargs = {
+        "episodes": 1000, # max number of episodes
+        "rng": np.random.default_rng(seed=123),
+        "epsilon": 0.5,
+        "gamma": 0.5,
+        "alpha": 0.5,
+        "max_steps": 100, # max size of an episode
+    }
 
     environments = create_environments(maps=maps)
 
@@ -148,6 +150,9 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
 
     return sarsa_dict, q_learn_dict
 
+"""
+PROBLEM 6 PART 2
+"""
 def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
     """
     Exploration Rate. Let us choose the abstraction of Map 4 and evaluate the
@@ -157,9 +162,25 @@ def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
     maps - those maps to test
     RETURN - (sarsa_dict, q_learn_dict) where each dict maps exploration rate to (time cost, number of episodes, test accuracy)
     """
+    # hyperparameters for both algorithms
+    kwargs = {
+        "episodes": 1000, # max number of episodes
+        "rng": np.random.default_rng(seed=123),
+        "epsilon": 0.5,
+        "gamma": 0.5,
+        "alpha": 0.5,
+        "max_steps": 100, # max size of an episode
+    }
 
+    environments = create_environments(maps=maps)
 
-    pass
+    sarsa_dict = {}
+    q_learn_dict = {}
+    
+    for i, env in enumerate(environments):
+        continue #TODO: remove this when ready to test
+
+    return sarsa_dict, q_learn_dict
 
 def run_q_learning():
     pass
