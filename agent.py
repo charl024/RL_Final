@@ -25,8 +25,8 @@ class Agent():
 
         n_actions = len(environment.actions)
 
-        width = environment.map.shape[1]
-        height = environment.map.shape[0]
+        width = environment.width
+        height = environment.height
 
         # q_table is a 3d matrix
         self.q_table = np.zeros((height, width, n_actions))
@@ -68,7 +68,6 @@ class Agent():
         # state - (x, y) position in map
         # RETURN - new state, reward
         action = self.rng.integers(self.n_actions)
-        print(f"Exploring: Chose action {action} for state {state}")
         
         return self.take_action(state, action)
         
@@ -77,25 +76,17 @@ class Agent():
         # state - (x, y) position in map
         # RETURN - new state, reward
         action = np.argmax(self.q_table[state[1], state[0]])
-        print(f"Exploiting: Chose action {action} for state {state}")
 
         return self.take_action(state, action)
-    
-    # state - position in map, used to index into q_table
-    # this may be where we use epsilon to choose exploration vs exploitation
-    def choose_action(self, state):
-        # explore
-        # else exploit
-        pass
 
-import map_abstraction
-import reward_strategy
+# import map_abstraction
+# import reward_strategy
 
-strat = reward_strategy.reward_strategy_simple
-env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), 
-                  target_position=(25,5), 
-                  reward_strategy=strat,
-                  )
+# strat = reward_strategy.reward_strategy_simple
+# env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), 
+#                   target_position=(25,5), 
+#                   reward_strategy=strat,
+#                   )
 
 # agent = Agent(environment=env, rng=np.random.default_rng(seed=123))
 
