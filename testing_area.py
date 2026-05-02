@@ -10,6 +10,15 @@ from reward_strategy import reward_strategy_simple
 
 TARGET_POSITION = (21, 23)
 
+KWARGS = {
+    "episodes": 1000, # max number of episodes
+    "rng": np.random.default_rng(seed=123),
+    "epsilon": 0.5,
+    "gamma": 0.5,
+    "alpha": 0.5,
+    "max_steps": 100, # max size of an episode
+}
+
 def test_acc(agent, environment):
     """
     Test the accuracy of the agent's learned policy by generating a path from 
@@ -87,26 +96,7 @@ def dummy_training_function(agent,
                             max_steps=200):
     return 1
 
-
-def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./map_bmps/"):
-    """
-    compare the performance of SARSA & Q-learning with the same hyperparameters 
-    on the 4 abstractions
-
-    This comparison shows the capability of the two 
-    learning processes in handling maps of different complexities.
-    """
-
-    # hyperparameters for both algorithms
-    kwargs={
-        "episodes": 1000, # max number of episodes
-        "rng": np.random.default_rng(seed=123),
-        "epsilon": 0.5,
-        "gamma": 0.5,
-        "alpha": 0.5,
-        "max_steps": 100, # max size of an episode
-    }
-
+def create_environments(maps, root_bmp_path="./map_bmps/"):
     target_position = TARGET_POSITION
 
     map_abstractions = [load_bmp_to_map(root_bmp_path + m + ".bmp") for m in maps]
@@ -115,6 +105,24 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
                                 reward_strategy=reward_strategy_simple, #TODO: are we happy with this reward strat?
                                 target_position=target_position) 
                     for m in map_abstractions]
+    return environments
+
+def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
+    """
+    compare the performance of SARSA & Q-learning with the same hyperparameters 
+    on the 4 abstractions
+
+    This comparison shows the capability of the two 
+    learning processes in handling maps of different complexities.
+
+    maps - those maps to test
+    RETURN - (sarsa_dict, q_learn_dict) where each dict maps map name to (time cost, number of episodes, test accuracy)
+    """
+
+    # hyperparameters for both algorithms
+    kwargs = KWARGS
+
+    environments = create_environments(maps=maps)
 
     sarsa_dict = {}
     q_learn_dict = {}
@@ -140,6 +148,19 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
 
     return sarsa_dict, q_learn_dict
 
+def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
+    """
+    Exploration Rate. Let us choose the abstraction of Map 4 and evaluate the
+    performance of SARSA with 3 exploration probabilities: ε = 0, 0.5, 1. Do the
+    same comparison for Q-learning. You may use gamma = 0.5.
+
+    maps - those maps to test
+    RETURN - (sarsa_dict, q_learn_dict) where each dict maps exploration rate to (time cost, number of episodes, test accuracy)
+    """
+
+
+    pass
+
 def run_q_learning():
     pass
 
@@ -154,4 +175,4 @@ if __name__ == "__main__":
 
     maps = ["map1", "map2", "map3", "map4", "hi", "spiral"]
 
-    print(test_map_complexity(maps=maps, root_bmp_path=root_bmp_path))
+    print(test_map_complexity(maps=maps))
