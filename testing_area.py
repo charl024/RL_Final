@@ -73,7 +73,6 @@ def eval_performance(environment, training_funct, kwargs):
 
     total_time = end_time - start_time
 
-    print(f"Generating Test Accuracy...")
     acc = test_acc(agent, environment)
 
     return total_time, num_episodes, acc
@@ -84,7 +83,8 @@ def dummy_training_function(agent,
                             epsilon=0.5, 
                             gamma=0.5,
                             alpha=0.1,
-                            max_steps=200):
+                            max_steps=200,
+                            ):
     return 1
 
 def create_environments(maps, root_bmp_path="./map_bmps/"):
@@ -111,7 +111,8 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
     learning processes in handling maps of different complexities.
 
     maps - those maps to test
-    RETURN - (sarsa_dict, q_learn_dict) where each dict maps map name to (time cost, number of episodes, test accuracy)
+    RETURN - (sarsa_dict, q_learn_dict) where each dict maps map name to (time 
+             cost, number of episodes, test accuracy)
     """
 
     # hyperparameters for both algorithms
@@ -145,7 +146,7 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
         q_learn_dict[map] = eval_performance(
             environment=env,
             training_funct=dummy_training_function, #TODO: replace with train_q_learning
-            kwargs=kwargs
+            kwargs=kwargs,
         )
 
     return sarsa_dict, q_learn_dict
@@ -160,17 +161,19 @@ def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
     same comparison for Q-learning. You may use gamma = 0.5.
 
     maps - those maps to test
-    RETURN - (sarsa_dict, q_learn_dict) where each dict maps exploration rate to (time cost, number of episodes, test accuracy)
+    RETURN - (sarsa_dict, q_learn_dict) where each dict maps (map, exploration) 
+             rate to (time cost, number of episodes, test accuracy)
     """
     # hyperparameters for both algorithms
     kwargs = {
         "episodes": 1000, # max number of episodes
         "rng": np.random.default_rng(seed=123),
-        "epsilon": 0.5,
         "gamma": 0.5,
         "alpha": 0.5,
         "max_steps": 100, # max size of an episode
     }
+
+    epsilon_values = [0, 0.5, 1]
 
     environments = create_environments(maps=maps)
 
@@ -178,7 +181,25 @@ def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
     q_learn_dict = {}
     
     for i, env in enumerate(environments):
-        continue #TODO: remove this when ready to test
+        for epsilon in epsilon_values:
+            kwargs["epsilon"] = epsilon
+            map = maps[i]
+            key = (map, epsilon)
+
+            # Track performance of SARSA on this map
+            sarsa_dict[key] = eval_performance(
+                environment=env,
+                training_funct=dummy_training_function, #TODO: replace with train_sarsa
+                kwargs=kwargs,
+            )
+
+            # Track performance of Q-Learning on this map
+            q_learn_dict[key] = eval_performance(
+                environment=env,
+                training_funct=dummy_training_function, #TODO: replace with train_q_learning
+                kwargs=kwargs,
+                )
+            continue #TODO: remove this when ready to test
 
     return sarsa_dict, q_learn_dict
 
@@ -196,4 +217,8 @@ if __name__ == "__main__":
 
     maps = ["map1", "map2", "map3", "map4", "hi", "spiral"]
 
+    print("Testing Map Complexity...")
     print(test_map_complexity(maps=maps))
+
+    print("Testing Exploration Rate...")
+    print(test_exploration_rate(maps=maps))
