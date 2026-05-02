@@ -8,7 +8,7 @@ from reward_strategy import reward_strategy_simple
 
 TARGET_POSITION = (21, 23)
 
-def test_map_complexity(root_bmp_path="./map_bmps/"):
+def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./map_bmps/"):
     """
     compare the performance of SARSA & Q-learning with the same hyperparameters 
     on the 4 abstractions
@@ -21,8 +21,6 @@ def test_map_complexity(root_bmp_path="./map_bmps/"):
 
     target_position = TARGET_POSITION
 
-    maps = ["map1", "map2", "map3", "map4", "hi", "spiral"]
-
     map_abstractions = [load_bmp_to_map(root_bmp_path + m + ".bmp") for m in maps]
 
 
@@ -30,29 +28,29 @@ def test_map_complexity(root_bmp_path="./map_bmps/"):
                                 reward_strategy=reward_strategy_simple, 
                                 target_position=target_position) 
                     for m in map_abstractions]
+
+
+    sarsa_times = {}
+    q_learning_times = {}
     
-    for env in environments:
-        env.plot()
-    # sarsa_time = 0
-    # q_learning_time = 0
-    
-    # for i, env in enumerate(environments):
-        
-    #     # SARSA TESTING
-    #     start_sarsa = time.perf_counter()
-    #     #TODO: run SARSA
-    #     end_sarsa = time.perf_counter()
+    for i, env in enumerate(environments):
+        map = maps[i]
 
-    #     sarsa_time = end_sarsa - start_sarsa
+        # SARSA TESTING
+        start_sarsa = time.perf_counter()
+        #TODO: SARSA learning
+        end_sarsa = time.perf_counter()
 
-    #     # Q-LEARNING TESTING
-    #     start_q_learning = time.perf_counter()
-    #     #TODO: run Q-learning
-    #     end_q_learning = time.perf_counter()
+        sarsa_times[map] = end_sarsa - start_sarsa
 
-    #     q_learning_time = end_q_learning - start_q_learning
+        # Q-LEARNING TESTING
+        start_q_learning = time.perf_counter()
+        #TODO: Q-learning learning
+        end_q_learning = time.perf_counter()
 
-    # return sarsa_time, q_learning_time
+        q_learning_times[map] = end_q_learning - start_q_learning
+
+    return sarsa_times, q_learning_times
 
 def run_q_learning():
     pass
@@ -66,4 +64,4 @@ if __name__ == "__main__":
     root_bmp_path = "./map_bmps/"
     bmp_path_one = f"{root_bmp_path}/SOMETHINGHERE"
 
-    print(test_map_complexity(root_bmp_path))
+    print(test_map_complexity(maps=["map1", "map2", "map3", "map4", "hi", "spiral"], root_bmp_path=root_bmp_path))
