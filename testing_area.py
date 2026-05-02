@@ -3,10 +3,46 @@
 import time
 
 from environment import Environment
+from agent import Agent
 from map_abstraction import load_bmp_to_map
 from reward_strategy import reward_strategy_simple
 
 TARGET_POSITION = (21, 23)
+
+def eval_performance(training_funct, kwargs):
+    """
+    Evaluating:
+    - The time cost of a learning task.
+    - The number of episodes investigated in a learning process.
+    - The test accuracy that is evaluated by considering all possible initial 
+      positions and generating a path from each of them using the obtained 
+      feedback policy. Such a path is valid when it reaches the target position 
+      without hitting any obstacle, otherwise it is invalid. Then the test 
+      accuracy is the percentage of the valid paths.
+
+    training_funct - the function to call to train the model (e.g. train_sarsa, train_q_learning)
+    kwargs - the keyword arguments to pass to the function (e.g. environment, agent, ...)
+
+    RETURN - (time cost, number of episodes, test accuracy)
+    """
+    
+    start_time = time.perf_counter()
+    training_funct(**kwargs)
+    end_time = time.perf_counter()
+
+    total_time = end_time - start_time
+
+    return total_time, 0, 0
+
+def dummy_training_function(agent, 
+                            reward_strategy, 
+                            max_episodes, 
+                            episode_length, 
+                            epsilon, 
+                            gamma, 
+                            alpha):
+    pass
+
 
 def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./map_bmps/"):
     """
@@ -28,29 +64,30 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
                                 reward_strategy=reward_strategy_simple, 
                                 target_position=target_position) 
                     for m in map_abstractions]
+    
+    # agents = [Agent(environment=env, rng=np.random.default_rng(seed=123)) for env in environments]
 
-
-    sarsa_times = {}
-    q_learning_times = {}
+    performance_dict = {}
+    performance = {}
     
     for i, env in enumerate(environments):
         map = maps[i]
+        print(f"Testing {map}...")
 
-        # SARSA TESTING
-        start_sarsa = time.perf_counter()
-        #TODO: SARSA learning
-        end_sarsa = time.perf_counter()
+        performance_dict[map] = eval_performance(
+            training_funct=dummy_training_function, 
+            kwargs={
+                "agent": None,
+                "reward_strategy": reward_strategy_simple,
+                "max_episodes": 1000,
+                "episode_length": 100,
+                "epsilon": epsilon,
+                "gamma": gamma,
+                "alpha": 0.1,
+            }
+        )
 
-        sarsa_times[map] = end_sarsa - start_sarsa
-
-        # Q-LEARNING TESTING
-        start_q_learning = time.perf_counter()
-        #TODO: Q-learning learning
-        end_q_learning = time.perf_counter()
-
-        q_learning_times[map] = end_q_learning - start_q_learning
-
-    return sarsa_times, q_learning_times
+    return performance_dict
 
 def run_q_learning():
     pass
