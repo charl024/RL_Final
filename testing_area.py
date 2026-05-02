@@ -78,13 +78,13 @@ def eval_performance(environment, training_funct, kwargs):
 
     return total_time, num_episodes, acc
 
-def dummy_training_function(agent, 
-                            reward_strategy, 
-                            max_episodes, 
-                            episode_length, 
-                            epsilon, 
-                            gamma, 
-                            alpha):
+def dummy_training_function(agent,
+                            episodes, 
+                            rng,
+                            epsilon=0.5, 
+                            gamma=0.5,
+                            alpha=0.1,
+                            max_steps=200):
     return 1
 
 
@@ -99,12 +99,12 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
 
     # hyperparameters for both algorithms
     kwargs={
-        "reward_strategy": reward_strategy_simple,
-        "max_episodes": 1000,
-        "episode_length": 100,
+        "episodes": 1000, # max number of episodes
+        "rng": np.random.default_rng(seed=123),
         "epsilon": 0.5,
         "gamma": 0.5,
         "alpha": 0.5,
+        "max_steps": 100, # max size of an episode
     }
 
     target_position = TARGET_POSITION
@@ -112,7 +112,7 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
     map_abstractions = [load_bmp_to_map(root_bmp_path + m + ".bmp") for m in maps]
 
     environments = [Environment(map_abstraction=m, 
-                                reward_strategy=reward_strategy_simple, 
+                                reward_strategy=reward_strategy_simple, #TODO: are we happy with this reward strat?
                                 target_position=target_position) 
                     for m in map_abstractions]
 
