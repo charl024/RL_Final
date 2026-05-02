@@ -13,9 +13,12 @@ class Agent():
     self.rng - random number generator for exploration
     """
     def __init__(self, environment, rng):
-        # environment type check
+        # Type checking
         if not isinstance(environment, Environment):
             raise TypeError(f"Expected Environment, got {type(environment).__name__}")
+        if not isinstance(rng, np.random._generator.Generator):
+            raise TypeError(f"Expected Generator, got {type(rng).__name__}")
+        
         
         self.environment = environment
         self.rng = rng
@@ -85,51 +88,51 @@ class Agent():
         # else exploit
         pass
 
-# import map_abstraction
-# import reward_strategy
+import map_abstraction
+import reward_strategy
 
-# strat = reward_strategy.reward_strategy_simple
-# env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), 
-#                   target_position=(25,5), 
-#                   reward_strategy=strat,
-#                   )
+strat = reward_strategy.reward_strategy_simple
+env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), 
+                  target_position=(25,5), 
+                  reward_strategy=strat,
+                  )
 
-# agent = Agent(environment=env, rng=np.random.default_rng(seed=123))
+agent = Agent(environment=env, rng=np.random.default_rng(seed=123))
 
-# # exploit
-# print("Exploiting from (0,0)")
-# print(agent.exploit((0,0)))
-# print(agent.exploit((0,0)))
-# print(agent.exploit((0,0)))
-# print(agent.exploit((0,0)))
-# print(agent.exploit((0,0)))
-# print(agent.exploit((0,0)))
-# print(agent.exploit((0,0)))
-# print(agent.exploit((0,0)))
+# exploit
+print("Exploiting from (0,0)")
+print(agent.exploit((0,0)))
+print(agent.exploit((0,0)))
+print(agent.exploit((0,0)))
+print(agent.exploit((0,0)))
+print(agent.exploit((0,0)))
+print(agent.exploit((0,0)))
+print(agent.exploit((0,0)))
+print(agent.exploit((0,0)))
 
-# print("Exploiting from (26, 5)")
-# print(agent.exploit((26,5)))
-# print(agent.exploit((26,5)))
-# print(agent.exploit((26,5)))
-# print(agent.exploit((26,5)))
-# print(agent.exploit((26,5)))
-# print(agent.exploit((26,5)))
+print("Exploiting from (26, 5)")
+print(agent.exploit((26,5)))
+print(agent.exploit((26,5)))
+print(agent.exploit((26,5)))
+print(agent.exploit((26,5)))
+print(agent.exploit((26,5)))
+print(agent.exploit((26,5)))
 
-# # explore
-# print("Exploring from (25,4)")
-# print(agent.explore((25,4)))
-# print(agent.explore((25,4)))
-# print(agent.explore((25,4)))    
-# print(agent.explore((25,4)))    
-# print(agent.explore((25,4)))    
-# print(agent.explore((25,4)))    
-# print(agent.explore((25,4)))   
+# explore
+print("Exploring from (25,4)")
+print(agent.explore((25,4)))
+print(agent.explore((25,4)))
+print(agent.explore((25,4)))    
+print(agent.explore((25,4)))    
+print(agent.explore((25,4)))    
+print(agent.explore((25,4)))    
+print(agent.explore((25,4)))   
 
-# #exploit again to see how q_table has changed
-# print("Exploiting from (25,4)")
-# print(agent.exploit((25,4)))
-# print(agent.exploit((25,4)))
-# print(agent.exploit((25,4)))
-# print(agent.exploit((25,4)))
+#exploit again to see how q_table has changed
+print("Exploiting from (25,4)")
+print(agent.exploit((25,4)))
+print(agent.exploit((25,4)))
+print(agent.exploit((25,4)))
+print(agent.exploit((25,4)))
 
-# print(agent)
+print(agent)
