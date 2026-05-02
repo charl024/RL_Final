@@ -1,6 +1,7 @@
 # do testing stuff here
 
 import time
+import numpy as np
 
 from environment import Environment
 from agent import Agent
@@ -9,7 +10,7 @@ from reward_strategy import reward_strategy_simple
 
 TARGET_POSITION = (21, 23)
 
-def eval_performance(training_funct, kwargs):
+def eval_performance(environment, training_funct, kwargs):
     """
     Evaluating:
     - The time cost of a learning task.
@@ -25,9 +26,14 @@ def eval_performance(training_funct, kwargs):
 
     RETURN - (time cost, number of episodes, test accuracy)
     """
-    
+    # Random number generator with fixed seed for reproducibility
+    rng = np.random.default_rng(seed=123)
+
+    # New agent
+    agent = Agent(environment=environment, rng=rng)
+
     start_time = time.perf_counter()
-    training_funct(**kwargs)
+    training_funct(agent=agent, **kwargs)
     end_time = time.perf_counter()
 
     total_time = end_time - start_time
@@ -52,8 +58,17 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
     This comparison shows the capability of the two 
     learning processes in handling maps of different complexities.
     """
-    epsilon =  0.5
-    gamma = 0.5
+
+    # hyperparameters for both algorithms
+    kwargs={
+        "reward_strategy": reward_strategy_simple,
+        "max_episodes": 1000,
+        "episode_length": 100,
+        "epsilon": 0.5,
+        "gamma": 0.5,
+        "alpha": 0.5,
+    }
+
 
     target_position = TARGET_POSITION
 
@@ -64,30 +79,30 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
                                 reward_strategy=reward_strategy_simple, 
                                 target_position=target_position) 
                     for m in map_abstractions]
-    
-    # agents = [Agent(environment=env, rng=np.random.default_rng(seed=123)) for env in environments]
 
-    performance_dict = {}
-    performance = {}
+    sarsa_dict = {}
+    q_learn_dict = {}
     
     for i, env in enumerate(environments):
         map = maps[i]
+
         print(f"Testing {map}...")
 
-        performance_dict[map] = eval_performance(
-            training_funct=dummy_training_function, 
-            kwargs={
-                "agent": None,
-                "reward_strategy": reward_strategy_simple,
-                "max_episodes": 1000,
-                "episode_length": 100,
-                "epsilon": epsilon,
-                "gamma": gamma,
-                "alpha": 0.1,
-            }
+        # Track performance of SARSA on this map
+        sarsa_dict[map] = eval_performance(
+            environment=env,
+            training_funct=dummy_training_function, #TODO: replace with train_sarsa
+            kwargs=kwargs
         )
 
-    return performance_dict
+        # Track performance of Q-Learning on this map
+        q_learn_dict[map] = eval_performance(
+            environment=env,
+            training_funct=dummy_training_function, #TODO: replace with train_q_learning
+            kwargs=kwargs
+        )
+
+    return sarsa_dict, q_learn_dict
 
 def run_q_learning():
     pass
