@@ -27,14 +27,20 @@ class Environment():
         dx, dy = self.actions[action]
         nx = state[0] + dx
         ny = state[1] + dy
-
-        # check boundary conditiond
-
-        # check obstacle
-
-        # check if target reached
-
-        # otherwise, just move accordingly
+        
+        if (nx < 0 or nx >= self.map.shape[1] or ny < 0 or ny >= self.map.shape[0]):
+            # out of bounds, return current state and some negative reward
+            reward = reward_strategy("boundary")
+        elif (self.map[ny][nx] == 0):
+            # check obstacle: 0 value in map means obstacle
+            reward = reward_strategy("obstacle")
+        elif (nx, ny) == self.target_position:
+            # check target reached
+            reward = reward_strategy("target")
+        else:
+            reward = reward_strategy("move")
+        
+        return (nx, ny), reward
 
     def plot(self):
         plt.imshow(self.map, cmap="gray_r")
@@ -46,5 +52,10 @@ class Environment():
         plt.show()
 
 # import map_abstraction
+# import reward_strategy
 # env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), target_position=(25,5))
 # env.plot()
+# print(env.update((0,0), 1,reward_strategy.reward_strategy_simple))
+# print(env.update((25,4), 1,reward_strategy.reward_strategy_simple))
+# print(env.update((24,5), 1,reward_strategy.reward_strategy_simple))
+# print(env.update((25,6), 2,reward_strategy.reward_strategy_simple))
