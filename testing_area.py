@@ -60,6 +60,8 @@ def eval_performance(environment, training_funct, kwargs):
     kwargs - the keyword arguments to pass to the function (e.g. environment, agent, ...)
 
     RETURN - (time cost, number of episodes, test accuracy)
+    TODO: ideas for other crriteria to evaluate:
+    - length of valid path / manhattan distance to target (averaged over all initial positions)
     """
     # Random number generator with fixed seed for reproducibility
     rng = np.random.default_rng(seed=123)
@@ -96,6 +98,9 @@ def create_environments(maps, root_bmp_path="./map_bmps/"):
                                 reward_strategy=reward_strategy_simple, #TODO: are we happy with this reward strat?
                                 target_position=target_position) 
                     for m in map_abstractions]
+    
+    # for env in environments:
+    #     env.plot()
     return environments
 
 
@@ -199,7 +204,57 @@ def test_exploration_rate(maps=["map1", "map2", "map3", "map4"]):
                 training_funct=dummy_training_function, #TODO: replace with train_q_learning
                 kwargs=kwargs,
                 )
-            continue #TODO: remove this when ready to test
+
+    return sarsa_dict, q_learn_dict
+
+"""
+PROBLEM 6 PART 3
+"""
+def test_discount_value(maps=["map1", "map2", "map3", "map4"]):
+    """
+    Discount Value. We still consider the abstraction of Map 4 and evaluate the 
+    performance of SARSA with 3 discount values: gamma = 0.1, 0.5, 1. Do the same 
+    comparison for Q-learning. You may use ε = 0.5.
+
+    maps - those maps to test
+    RETURN - (sarsa_dict, q_learn_dict) where each dict maps (map, gamma) 
+             rate to (time cost, number of episodes, test accuracy)
+    """
+    # hyperparameters for both algorithms
+    kwargs = {
+        "episodes": 1000, # max number of episodes
+        "rng": np.random.default_rng(seed=123),
+        "epsilon": 0.5,
+        "alpha": 0.5,
+        "max_steps": 100, # max size of an episode
+    }
+
+    gamma_values = [0.1, 0.5, 1]
+
+    environments = create_environments(maps=maps)
+
+    sarsa_dict = {}
+    q_learn_dict = {}
+    
+    for i, env in enumerate(environments):
+        for gamma in gamma_values:
+            kwargs["gamma"] = gamma
+            map = maps[i]
+            key = (map, gamma)
+
+            # Track performance of SARSA on this map
+            sarsa_dict[key] = eval_performance(
+                environment=env,
+                training_funct=dummy_training_function, #TODO: replace with train_sarsa
+                kwargs=kwargs,
+            )
+
+            # Track performance of Q-Learning on this map
+            q_learn_dict[key] = eval_performance(
+                environment=env,
+                training_funct=dummy_training_function, #TODO: replace with train_q_learning
+                kwargs=kwargs,
+                )
 
     return sarsa_dict, q_learn_dict
 
@@ -222,3 +277,6 @@ if __name__ == "__main__":
 
     print("Testing Exploration Rate...")
     print(test_exploration_rate(maps=maps))
+
+    print("Testing Discount Value...")
+    print(test_discount_value(maps=maps))
