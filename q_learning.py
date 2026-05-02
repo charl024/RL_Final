@@ -24,7 +24,8 @@ def train_q_learning(
     initial_state=(0,0),
     max_steps=200):
     
-    for episode in range(episodes):        
+    for episode in range(episodes):
+        agent.environment.reset_visited()           
         state = initial_state
 
         # iterate through steps
@@ -54,41 +55,41 @@ def train_q_learning(
                 break
 
 
-from map_abstraction import load_bmp_to_map
-from reward_strategy import reward_strategy_simple, reward_strategy_distance_based
+# from map_abstraction import load_bmp_to_map
+# from reward_strategy import reward_strategy_simple, reward_strategy_distance_based
 
-target_position = (30, 30)
+# target_position = (30, 30)
 
-initial_state = (1, 1)
+# initial_state = (1, 1)
 
-rng = np.random.default_rng(seed=1)
+# rng = np.random.default_rng(seed=1)
 
-env = Environment(map_abstraction=load_bmp_to_map("./map_bmps/map1.bmp"),
-                  target_position=target_position,
-                  reward_strategy=reward_strategy_simple)
+# env = Environment(map_abstraction=load_bmp_to_map("./map_bmps/map1.bmp"),
+#                   target_position=target_position,
+#                   reward_strategy=reward_strategy_simple)
 
-agent = Agent(env, rng=rng)
+# agent = Agent(env, rng=rng)
 
-train_q_learning(agent=agent, 
-                 episodes=10000, 
-                 rng=rng,
-                 initial_state=initial_state)
+# train_q_learning(agent=agent, 
+#                  episodes=10000, 
+#                  rng=rng,
+#                  initial_state=initial_state)
 
-def run_episode(agent, initial_state, max_steps=200):
-    state = initial_state
+# def run_episode(agent, initial_state, max_steps=200):
+#     state = initial_state
 
-    for step in range(max_steps):
-        _, _, action = agent.exploit(state)
-        new_state, reward = agent.environment.update(state, action)
+#     for step in range(max_steps):
+#         _, _, action = agent.exploit(state)
+#         new_state, reward = agent.environment.update(state, action)
 
-        if new_state is None:
-            continue
+#         if new_state is None:
+#             continue
 
-        print(f"step {step}: {state} -> {new_state}")
-        state = new_state
+#         print(f"step {step}: {state} -> {new_state}")
+#         state = new_state
 
-        if state == agent.environment.target_position:
-            print("target reached!")
-            break
+#         if state == agent.environment.target_position:
+#             print("target reached!")
+#             break
 
-run_episode(agent=agent, initial_state=initial_state)
+# run_episode(agent=agent, initial_state=initial_state)

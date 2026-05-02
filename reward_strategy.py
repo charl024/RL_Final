@@ -3,14 +3,23 @@
 def reward_strategy_simple(event):
     if event == "target":
         return 100
-    if event in ["obstacle", "boundary"]:
+    if event in ["obstacle", "boundary", "visited"]:
         return -100
     return -1
 
 def reward_strategy_distance_based(event):
     if event == "target":
         return 100
-    if event in ["obstacle", "boundary"]:
+    if event in ["obstacle", "boundary", "visited"]:
         return -100
     # negative reward based on distance to target (manhattan distance? euclidean distance?)
     return -event
+
+def reward_strategy_visited(event):
+    if event == "target":
+        return 100
+    if event in ["obstacle", "boundary"]:
+        return -100
+    if event == "visited":
+        return -50
+    return -1
