@@ -17,6 +17,18 @@ class Environment():
             (0, -1), # South, 2, Down
             (-1, 0), # West,  3, Left
         ]
+    def __repr__(self) -> str:
+        string = []
+        for y in range(self.map.shape[0]):
+            for x in range(self.map.shape[1]):
+                if (x, y) == self.target_position:
+                    string.append("T")
+                elif self.map[y][x] == 0:
+                    string.append("X")
+                else:
+                    string.append(".")
+            string.append("\n")
+        return "".join(string)
     
     # state - position in map
     # action - some way to choose a specific action from actions (integer value, idx)
@@ -54,6 +66,7 @@ class Environment():
 # import map_abstraction
 # import reward_strategy
 # env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), target_position=(25,5))
+# print(env)
 # env.plot()
 # print(env.update((0,0), 1,reward_strategy.reward_strategy_simple))
 # print(env.update((25,4), 1,reward_strategy.reward_strategy_simple))
