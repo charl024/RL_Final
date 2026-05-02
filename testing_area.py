@@ -10,6 +10,41 @@ from reward_strategy import reward_strategy_simple
 
 TARGET_POSITION = (21, 23)
 
+def test_acc(agent, environment):
+    """
+    Test the accuracy of the agent's learned policy by generating a path from 
+    each possible initial position and checking if it reaches the target without 
+    hitting obstacles.
+
+    RETURN - test accuracy (percentage of valid paths)
+    """
+    valid_paths = 0
+    total_paths = environment.width * environment.height
+
+    for y in range(environment.height):
+        for x in range(environment.width):
+            state = (x, y)
+            if (state == environment.target_position or 
+                environment.in_boundary(state)):
+                # skip target position and obstacles
+                continue
+            path_valid = True
+
+            while state != environment.target_position:
+                new_state, reward, _ = agent.exploit(state)
+
+                if reward <= -100:  # hit obstacle or boundary
+                    #TODO: is this the best way to be doing this? 
+                    path_valid = False
+                    break
+
+                state = new_state
+
+            if path_valid:
+                valid_paths += 1
+    
+    return valid_paths / total_paths
+
 def eval_performance(environment, training_funct, kwargs):
     """
     Evaluating:
@@ -33,12 +68,15 @@ def eval_performance(environment, training_funct, kwargs):
     agent = Agent(environment=environment, rng=rng)
 
     start_time = time.perf_counter()
-    training_funct(agent=agent, **kwargs)
+    num_episodes = training_funct(agent=agent, **kwargs)
     end_time = time.perf_counter()
 
     total_time = end_time - start_time
 
-    return total_time, 0, 0
+    print(f"Generating Test Accuracy...")
+    acc = test_acc(agent, environment)
+
+    return total_time, num_episodes, acc
 
 def dummy_training_function(agent, 
                             reward_strategy, 
@@ -47,7 +85,7 @@ def dummy_training_function(agent,
                             epsilon, 
                             gamma, 
                             alpha):
-    pass
+    return 1
 
 
 def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./map_bmps/"):
@@ -69,11 +107,9 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"], root_bmp_path="./
         "alpha": 0.5,
     }
 
-
     target_position = TARGET_POSITION
 
     map_abstractions = [load_bmp_to_map(root_bmp_path + m + ".bmp") for m in maps]
-
 
     environments = [Environment(map_abstraction=m, 
                                 reward_strategy=reward_strategy_simple, 
@@ -116,4 +152,6 @@ if __name__ == "__main__":
     root_bmp_path = "./map_bmps/"
     bmp_path_one = f"{root_bmp_path}/SOMETHINGHERE"
 
-    print(test_map_complexity(maps=["map1", "map2", "map3", "map4", "hi", "spiral"], root_bmp_path=root_bmp_path))
+    maps = ["map1", "map2", "map3", "map4", "hi", "spiral"]
+
+    print(test_map_complexity(maps=maps, root_bmp_path=root_bmp_path))
