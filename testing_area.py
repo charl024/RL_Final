@@ -6,7 +6,7 @@ import numpy as np
 from environment import Environment
 from agent import Agent
 from map_abstraction import load_bmp_to_map
-from reward_strategy import reward_strategy_simple
+from reward_strategy import *
 
 TARGET_POSITION = (21, 23)
 
@@ -89,13 +89,13 @@ def dummy_training_function(agent,
                             ):
     return 1
 
-def create_environments(maps, root_bmp_path="./map_bmps/"):
+def create_environments(maps, strategy=reward_strategy_simple, root_bmp_path="./map_bmps/"):
     target_position = TARGET_POSITION
 
     map_abstractions = [load_bmp_to_map(root_bmp_path + m + ".bmp") for m in maps]
 
     environments = [Environment(map_abstraction=m, 
-                                reward_strategy=reward_strategy_simple, #TODO: are we happy with this reward strat?
+                                reward_strategy=strategy,
                                 target_position=target_position) 
                     for m in map_abstractions]
     
@@ -261,16 +261,57 @@ def test_discount_value(maps=["map4"]):
 """
 PROBLEM 6 PART 4
 """
-def test_reward_strategy(maps=["map4"]):
+def test_reward_strategy(epsilon, gamma, maps=["map4", "hi", "spiral"]):
     """
     Reward Strategy. For each learning process, please use the values of ε and 
     gamma that have the best performance in the previous comparisons. Then, 
     compare the performance of the learning process based on S1 and S2.
 
-    TODO: should we use different map here? 
+    epsilon - best performing epsilon value
+    gamma - best performing gamma value
+    maps - those maps to test
+
+    RETURN - (sarsa_dict, q_learn_dict) where each dict maps (map, strategy) 
+             rate to (time cost, number of episodes, test accuracy)
     """
-    #TODO
-    pass
+    # hyperparameters for both algorithms
+    kwargs = {
+        "episodes": 1000, # max number of episodes
+        "rng": np.random.default_rng(seed=123),
+        "epsilon": epsilon,
+        "alpha": 0.5,
+        "gamma": gamma,
+        "max_steps": 100, # max size of an episode
+    }
+    strategies = [reward_strategy_simple, reward_strategy_distance_based]
+    environments = []
+    for strat in strategies:
+        environments += create_environments(maps=maps, strategy=strat)
+
+    sarsa_dict = {}
+    q_learn_dict = {}
+
+    for i, env in enumerate(environments):            
+        map = maps[i]
+        for strat in strategies:
+            kwargs["gamma"] = gamma
+            key = (map, gamma)
+
+            # Track performance of SARSA on this map
+            sarsa_dict[key] = eval_performance(
+                environment=env,
+                training_funct=dummy_training_function, #TODO: replace with train_sarsa
+                kwargs=kwargs,
+            )
+
+            # Track performance of Q-Learning on this map
+            q_learn_dict[key] = eval_performance(
+                environment=env,
+                training_funct=dummy_training_function, #TODO: replace with train_q_learning
+                kwargs=kwargs,
+                )
+
+    return sarsa_dict, q_learn_dict
 
 def get_best_acc(dict):
     """
