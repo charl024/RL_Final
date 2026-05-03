@@ -1,4 +1,8 @@
 # do testing stuff here
+"""
+TODO: Thoughts for extra cred...
+- test for alpha...
+"""
 
 import time
 import numpy as np
@@ -261,7 +265,7 @@ def test_discount_value(maps=["map4"]):
 """
 PROBLEM 6 PART 4
 """
-def test_reward_strategy(epsilon, gamma, maps=["map4", "hi", "spiral"]):
+def test_reward_strategy(epsilons, gammas, maps=["map4", "hi", "spiral"]):
     """
     Reward Strategy. For each learning process, please use the values of ε and 
     gamma that have the best performance in the previous comparisons. Then, 
@@ -275,47 +279,54 @@ def test_reward_strategy(epsilon, gamma, maps=["map4", "hi", "spiral"]):
              rate to (time cost, number of episodes, test accuracy)
     """
     # hyperparameters for both algorithms
-    kwargs = {
+    kwargs_sarsa = {
         "episodes": 1000, # max number of episodes
         "rng": np.random.default_rng(seed=123),
-        "epsilon": epsilon,
+        "epsilon": epsilons[0],
         "alpha": 0.5,
-        "gamma": gamma,
+        "gamma": gammas[0],
         "max_steps": 100, # max size of an episode
     }
+
+    kwargs_q = {
+        "episodes": 1000, # max number of episodes
+        "rng": np.random.default_rng(seed=123),
+        "epsilon": epsilons[1],
+        "alpha": 0.5,
+        "gamma": gammas[1],
+        "max_steps": 100, # max size of an episode
+    }
+
     strategies = [reward_strategy_simple, reward_strategy_distance_based]
-    environments = []
-    for strat in strategies:
-        environments += create_environments(maps=maps, strategy=strat)
 
     sarsa_dict = {}
     q_learn_dict = {}
 
-    for i, env in enumerate(environments):            
-        map = maps[i]
-        for strat in strategies:
-            kwargs["gamma"] = gamma
-            key = (map, gamma)
+    for strat in strategies:            
+        environments = create_environments(maps=maps, strategy=strat)
+        for i, env in enumerate(environments):
+            map_name = maps[i]
+            key = (strat.__name__, map_name)
 
             # Track performance of SARSA on this map
             sarsa_dict[key] = eval_performance(
                 environment=env,
                 training_funct=dummy_training_function, #TODO: replace with train_sarsa
-                kwargs=kwargs,
+                kwargs=kwargs_sarsa,
             )
 
             # Track performance of Q-Learning on this map
             q_learn_dict[key] = eval_performance(
                 environment=env,
                 training_funct=dummy_training_function, #TODO: replace with train_q_learning
-                kwargs=kwargs,
+                kwargs=kwargs_q,
                 )
 
     return sarsa_dict, q_learn_dict
 
 def get_best_acc(dict):
     """
-    Get the best performing hyperparameter (for tests 2, 3, and 4)
+    Get the best performing hyperparameter (for tests 2 and 3)
     """
     best_acc = 0
     best_param_val = 0
@@ -339,8 +350,6 @@ def run_sarsa():
 if __name__ == "__main__":
     print("Starting!")
     #TODO: progress bar
-    root_bmp_path = "./map_bmps/"
-    bmp_path_one = f"{root_bmp_path}/SOMETHINGHERE"
 
     maps = ["map1", "map2", "map3", "map4", "hi", "spiral"]
 
@@ -351,10 +360,21 @@ if __name__ == "__main__":
 
     print("Testing Exploration Rate...")
     sarsa_dict, q_dict = test_exploration_rate()
+    sars_exp_rate, _ = get_best_acc(sarsa_dict)
+    q_exp_rate, _ = get_best_acc(q_dict)
     print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
     print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
 
     print("Testing Discount Value...")
     sarsa_dict, q_dict = test_discount_value()
+    sars_disc, _ = get_best_acc(sarsa_dict)
+    q_disc, _ = get_best_acc(q_dict)
+    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
+    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
+
+    print("Testing Reward Strategy...")
+    sarsa_dict, q_dict = test_reward_strategy(epsilons=(sars_exp_rate, q_exp_rate), 
+                                              gammas=(sars_disc, q_disc),
+                                              )
     print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
     print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
