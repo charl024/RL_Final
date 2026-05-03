@@ -1,7 +1,12 @@
 # do testing stuff here
 """
 TODO: Thoughts for extra cred...
-- test for alpha...
+- test for alpha
+- Tests for max number of episodes
+- Tests for max number of iterations per episode
+- More measurements of performance
+- More map tests?
+- Visualization of testing? 
 """
 
 import time
