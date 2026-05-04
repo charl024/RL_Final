@@ -23,8 +23,11 @@ def train_q_learning(
     alpha=0.1,
     initial_state=(0,0),
     max_steps=200):
+
+    ep_cnt = 0
     
     for episode in range(episodes):
+        ep_cnt += 1
         agent.environment.reset_visited()           
         state = initial_state
 
@@ -52,8 +55,8 @@ def train_q_learning(
             state = new_state
 
             if new_state == agent.environment.target_position:
-                break
-
+                return ep_cnt
+    return ep_cnt
 
 # from map_abstraction import load_bmp_to_map
 # from reward_strategy import reward_strategy_simple, reward_strategy_distance_based

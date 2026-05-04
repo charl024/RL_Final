@@ -21,6 +21,8 @@ def train_sarsa(
     alpha=0.1,
     initial_state=(0,0),
     max_steps=200):
+
+    ep_cnt = 0
     
     for episode in range(episodes):
         agent.environment.reset_visited()      
@@ -34,6 +36,7 @@ def train_sarsa(
 
         # iterate through steps
         for step in range(max_steps):
+            ep_cnt += 1
 
             new_state, reward, _ = agent.take_action(state, action)
 
@@ -56,9 +59,10 @@ def train_sarsa(
             state = new_state
             action = new_action
 
+
             if new_state == agent.environment.target_position:
-                break
-            
+                return ep_cnt
+    return ep_cnt            
 
 # from map_abstraction import load_bmp_to_map
 # from reward_strategy import *
