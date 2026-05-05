@@ -21,6 +21,21 @@ from sarsa import train_sarsa
 
 TARGET_POSITION = (21, 23)
 
+# test_exploration_rate
+EPISODES_EXPL_RATE = 10000
+MAX_STEPS_EXPL_RATE = 200
+# test_discount_value
+EPISODES_DISCOUNT_VALUE = 10000
+MAX_STEPS_DISCOUNT_VALUE = 200
+# test_map_complexity
+EPISODES_MAP_COMP = 10000
+MAX_STEPS_MAP_COMP = 200
+# test_reward_strategy, both sarsa and q-learning
+EPISODES_REWARD_STRAT_QLEARN = 10000
+MAX_STEPS_REWARD_STRAT_QLEARN = 200
+EPISODES_REWARD_STRAT_SARSA = 10000
+MAX_STEPS_REWARD_STRAT_SARSA = 200
+
 def test_acc(agent, environment,  max_path_steps=500):
     """
     Test the accuracy of the agent's learned policy by generating a path from 
@@ -101,14 +116,14 @@ def eval_performance(environment, training_funct, kwargs):
     agent = Agent(environment=environment, rng=rng)
 
     start_time = time.perf_counter()
-    num_episodes = training_funct(agent=agent, **kwargs)
+    steps = training_funct(agent=agent, **kwargs)
     end_time = time.perf_counter()
 
     total_time = end_time - start_time
 
     acc = test_acc(agent, environment)
 
-    return total_time, num_episodes, acc
+    return total_time, steps, acc
 
 def dummy_training_function(agent,
                             episodes, 
@@ -153,12 +168,12 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
 
     # hyperparameters for both algorithms
     kwargs = {
-        "episodes": 1000, # max number of episodes
+        "episodes": EPISODES_MAP_COMP, # max number of episodes
         "rng": np.random.default_rng(seed=123),
         "epsilon": 0.5,
         "gamma": 0.5,
         "alpha": 0.5,
-        "max_steps": 100, # max size of an episode
+        "max_steps": MAX_STEPS_MAP_COMP, # max size of an episode
     }
 
     environments = create_environments(maps=maps)
@@ -202,11 +217,11 @@ def test_exploration_rate(map=["map4"]):
     """
     # hyperparameters for both algorithms
     kwargs = {
-        "episodes": 1000, # max number of episodes
+        "episodes": EPISODES_EXPL_RATE, # max number of episodes
         "rng": np.random.default_rng(seed=123),
         "gamma": 0.5,
         "alpha": 0.5,
-        "max_steps": 100, # max size of an episode
+        "max_steps": MAX_STEPS_EXPL_RATE, # max size of an episode
     }
 
     epsilon_values = [0, 0.5, 1]
@@ -253,11 +268,11 @@ def test_discount_value(maps=["map4"]):
     """
     # hyperparameters for both algorithms
     kwargs = {
-        "episodes": 1000, # max number of episodes
+        "episodes": EPISODES_DISCOUNT_VALUE, # max number of episodes
         "rng": np.random.default_rng(seed=123),
         "epsilon": 0.5,
         "alpha": 0.5,
-        "max_steps": 100, # max size of an episode
+        "max_steps": MAX_STEPS_DISCOUNT_VALUE, # max size of an episode
     }
 
     gamma_values = [0.1, 0.5, 1]
@@ -307,21 +322,21 @@ def test_reward_strategy(epsilons, gammas, maps=["map4", "hi", "spiral"]):
     """
     # hyperparameters for both algorithms
     kwargs_sarsa = {
-        "episodes": 1000, # max number of episodes
+        "episodes": EPISODES_REWARD_STRAT_SARSA, # max number of episodes
         "rng": np.random.default_rng(seed=123),
         "epsilon": epsilons[0],
         "alpha": 0.5,
         "gamma": gammas[0],
-        "max_steps": 200, # max size of an episode
+        "max_steps": MAX_STEPS_REWARD_STRAT_SARSA, # max size of an episode
     }
 
     kwargs_q = {
-        "episodes": 1000, # max number of episodes
+        "episodes": EPISODES_REWARD_STRAT_QLEARN, # max number of episodes
         "rng": np.random.default_rng(seed=123),
         "epsilon": epsilons[1],
         "alpha": 0.5,
         "gamma": gammas[1],
-        "max_steps": 200, # max size of an episode
+        "max_steps": MAX_STEPS_REWARD_STRAT_QLEARN, # max size of an episode
     }
 
     strategies = [reward_strategy_simple, reward_strategy_distance_based]
