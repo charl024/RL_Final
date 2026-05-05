@@ -16,10 +16,12 @@ from environment import Environment
 from agent import Agent
 from map_abstraction import load_bmp_to_map
 from reward_strategy import *
+from q_learning import train_q_learning
+from sarsa import train_sarsa
 
 TARGET_POSITION = (21, 23)
 
-def test_acc(agent, environment):
+def test_acc(agent, environment,  max_path_steps=500):
     """
     Test the accuracy of the agent's learned policy by generating a path from 
     each possible initial position and checking if it reaches the target without 
@@ -28,19 +30,39 @@ def test_acc(agent, environment):
     RETURN - test accuracy (percentage of valid paths)
     """
     valid_paths = 0
-    total_paths = environment.width * environment.height
+    total_paths = 0
 
     for y in range(environment.height):
         for x in range(environment.width):
             state = (x, y)
-            if (state == environment.target_position or 
-                environment.in_boundary(state)):
-                # skip target position and obstacles
-                continue
-            path_valid = True
 
-            while state != environment.target_position:
-                new_state, reward, _ = agent.exploit(state)
+            if state == environment.target_position:
+                continue
+
+            if not environment.in_boundary(state):
+                continue
+
+            if environment.is_obstacle(state):
+                continue
+
+            total_paths += 1
+            path_valid = False
+
+            environment.reset_visited()
+
+            for _ in range(max_path_steps):
+                if state == environment.target_position:
+                    path_valid = True
+                    break
+
+                action = agent.exploit(state)
+                new_state, reward = environment.update(state, action)
+
+                if new_state is None:
+                    break
+
+                # print(new_state)
+                # print(reward)
 
                 if reward <= -100:  # hit obstacle or boundary
                     #TODO: is this the best way to be doing this? 
@@ -152,14 +174,14 @@ def test_map_complexity(maps=["map1", "map2", "map3", "map4"]):
         # Track performance of SARSA on this map
         sarsa_dict[map] = eval_performance(
             environment=env,
-            training_funct=dummy_training_function, #TODO: replace with train_sarsa
+            training_funct=train_sarsa,
             kwargs=kwargs
         )
 
         # Track performance of Q-Learning on this map
         q_learn_dict[map] = eval_performance(
             environment=env,
-            training_funct=dummy_training_function, #TODO: replace with train_q_learning
+            training_funct=train_q_learning,
             kwargs=kwargs,
         )
 
@@ -203,14 +225,14 @@ def test_exploration_rate(map=["map4"]):
             # Track performance of SARSA on this map
             sarsa_dict[epsilon] = eval_performance(
                 environment=env,
-                training_funct=dummy_training_function, #TODO: replace with train_sarsa
+                training_funct=train_sarsa,
                 kwargs=kwargs,
             )
 
             # Track performance of Q-Learning on this map
             q_learn_dict[epsilon] = eval_performance(
                 environment=env,
-                training_funct=dummy_training_function, #TODO: replace with train_q_learning
+                training_funct=train_q_learning,
                 kwargs=kwargs,
                 )
 
@@ -254,14 +276,14 @@ def test_discount_value(maps=["map4"]):
             # Track performance of SARSA on this map
             sarsa_dict[gamma] = eval_performance(
                 environment=env,
-                training_funct=dummy_training_function, #TODO: replace with train_sarsa
+                training_funct=train_sarsa,
                 kwargs=kwargs,
             )
 
             # Track performance of Q-Learning on this map
             q_learn_dict[gamma] = eval_performance(
                 environment=env,
-                training_funct=dummy_training_function, #TODO: replace with train_q_learning
+                training_funct=train_q_learning,
                 kwargs=kwargs,
                 )
 
@@ -290,7 +312,7 @@ def test_reward_strategy(epsilons, gammas, maps=["map4", "hi", "spiral"]):
         "epsilon": epsilons[0],
         "alpha": 0.5,
         "gamma": gammas[0],
-        "max_steps": 100, # max size of an episode
+        "max_steps": 200, # max size of an episode
     }
 
     kwargs_q = {
@@ -299,7 +321,7 @@ def test_reward_strategy(epsilons, gammas, maps=["map4", "hi", "spiral"]):
         "epsilon": epsilons[1],
         "alpha": 0.5,
         "gamma": gammas[1],
-        "max_steps": 100, # max size of an episode
+        "max_steps": 200, # max size of an episode
     }
 
     strategies = [reward_strategy_simple, reward_strategy_distance_based]
@@ -316,14 +338,14 @@ def test_reward_strategy(epsilons, gammas, maps=["map4", "hi", "spiral"]):
             # Track performance of SARSA on this map
             sarsa_dict[key] = eval_performance(
                 environment=env,
-                training_funct=dummy_training_function, #TODO: replace with train_sarsa
+                training_funct=train_sarsa,
                 kwargs=kwargs_sarsa,
             )
 
             # Track performance of Q-Learning on this map
             q_learn_dict[key] = eval_performance(
                 environment=env,
-                training_funct=dummy_training_function, #TODO: replace with train_q_learning
+                training_funct=train_q_learning,
                 kwargs=kwargs_q,
                 )
 
@@ -343,14 +365,6 @@ def get_best_acc(dict):
             best_param_val = key
 
     return (best_param_val, best_acc)
-
-
-
-def run_q_learning():
-    pass
-
-def run_sarsa():
-    pass
 
 if __name__ == "__main__":
     print("Starting!")
