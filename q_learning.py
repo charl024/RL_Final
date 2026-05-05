@@ -8,10 +8,9 @@ from agent import Agent
 def explore_or_exploit(agent, state, epsilon, rng):
     # explore with probability epsilon, otherwise exploit
     if rng.random() < epsilon:
-        # print(f"Exploring: Chose random action for state {state}")
-        return agent.explore(state)
-    else:
-        return agent.exploit(state)
+        return agent.explore()
+    return agent.exploit(state)
+
 
 # reward strategy, environment passed in implicitly through agent object
 def train_q_learning(
@@ -24,23 +23,27 @@ def train_q_learning(
     initial_state=(0,0),
     max_steps=200):
 
-    ep_cnt = 0
+    step_count = 0
     
     for episode in range(episodes):
-        ep_cnt += 1
         agent.environment.reset_visited()           
         state = initial_state
 
         # iterate through steps
         for step in range(max_steps):
+            step_count += 1
             # compute R, S'
-            new_state, reward, action = explore_or_exploit(agent=agent, 
-                                                           state=state, 
-                                                           epsilon=epsilon, 
-                                                           rng=rng)
+            action = explore_or_exploit(
+                agent=agent, 
+                state=state, 
+                epsilon=epsilon, 
+                rng=rng
+            )
+
+            new_state, reward = agent.take_action(state, action)
 
             if (new_state is None and reward is None):
-                continue
+                break
             
             # parse S', and S
             x, y = state
@@ -55,8 +58,8 @@ def train_q_learning(
             state = new_state
 
             if new_state == agent.environment.target_position:
-                return ep_cnt
-    return ep_cnt
+                break
+    return step_count
 
 # from map_abstraction import load_bmp_to_map
 # from reward_strategy import reward_strategy_simple, reward_strategy_distance_based

@@ -7,11 +7,9 @@ from agent import Agent
 def explore_or_exploit(agent, state, epsilon, rng):
     # explore with probability epsilon, otherwise exploit
     if rng.random() < epsilon:
-        # print(f"Exploring: Chose random action for state {state}")
-        return agent.explore(state)
-    else:
-        return agent.exploit(state)
-    
+        return agent.explore()
+    return agent.exploit(state)
+
 def train_sarsa(
     agent, 
     episodes, 
@@ -22,33 +20,36 @@ def train_sarsa(
     initial_state=(0,0),
     max_steps=200):
 
-    ep_cnt = 0
+    step_count = 0
     
     for episode in range(episodes):
         agent.environment.reset_visited()      
         # init S  
         state = initial_state
         # choose A from S
-        _, _, action = explore_or_exploit(agent=agent, 
-                                          state=state, 
-                                          epsilon=epsilon, 
-                                          rng=rng)
+        action = explore_or_exploit(
+            agent=agent, 
+            state=state, 
+            epsilon=epsilon, 
+            rng=rng
+        )
 
         # iterate through steps
         for step in range(max_steps):
-            ep_cnt += 1
+            step_count += 1
 
-            new_state, reward, _ = agent.take_action(state, action)
+            new_state, reward = agent.take_action(state, action)
 
-            if new_state is None:
-                continue
+            if (new_state is None and reward is None):
+                break
 
             # choose A' using S'
-            _, _, new_action = explore_or_exploit(
-                                          agent=agent, 
-                                          state=new_state, 
-                                          epsilon=epsilon, 
-                                          rng=rng)
+            new_action = explore_or_exploit(
+                agent=agent, 
+                state=new_state, 
+                epsilon=epsilon, 
+                rng=rng
+            )
 
             x, y = state
             xp, yp = new_state
@@ -61,8 +62,8 @@ def train_sarsa(
 
 
             if new_state == agent.environment.target_position:
-                return ep_cnt
-    return ep_cnt            
+                break
+    return step_count
 
 # from map_abstraction import load_bmp_to_map
 # from reward_strategy import *
