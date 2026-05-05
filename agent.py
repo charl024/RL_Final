@@ -59,23 +59,20 @@ class Agent():
 
         x, y = state
 
-        return new_state, reward, action
+        return new_state, reward
 
-    def explore(self, state):
+    def explore(self):
         # randomly choose an action to perform
         # state - (x, y) position in map
         # RETURN - new state, reward
-        action = self.rng.integers(self.n_actions)
-        
-        return self.take_action(state, action)
+        return self.rng.integers(self.n_actions)
         
     def exploit(self, state):
         # choose the action with the highest q value for the given state
         # state - (x, y) position in map
         # RETURN - new state, reward
-        action = np.argmax(self.q_table[state[1], state[0]])
-
-        return self.take_action(state, action)
+        x, y = state
+        return np.argmax(self.q_table[y, x])
 
 # import map_abstraction
 # import reward_strategy
