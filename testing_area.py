@@ -366,6 +366,33 @@ def get_best_acc(dict):
 
     return (best_param_val, best_acc)
 
+def print_results(title, sarsa_dict, q_dict):
+    print(title)
+    print("-" * 70)
+
+    print("SARSA:")
+    for key, value in sarsa_dict.items():
+        time_cost, steps, acc = value
+        print(f"\t\t{key}: ({time_cost:.4f}s, {steps} steps, {acc * 100:.3f}%)")
+
+    print()
+
+    print("Q-Learning:")
+    for key, value in q_dict.items():
+        time_cost, steps, acc = value
+        print(f"\t\t{key}: ({time_cost:.4f}s, {steps} steps, {acc * 100:.3f}%)")
+
+    print()
+
+    sarsa_best_key, sarsa_best_acc = get_best_acc(sarsa_dict)
+    q_best_key, q_best_acc = get_best_acc(q_dict)
+
+    print()
+    print(f"\tSARSA best: ({sarsa_best_key}, {sarsa_best_acc * 100:.3f}%)")
+    print(f"\tQ-Learning best: ({q_best_key}, {q_best_acc * 100:.3f}%)")
+    print()
+    print("-" * 70)
+
 if __name__ == "__main__":
     print("Starting!")
     #TODO: progress bar
@@ -374,26 +401,23 @@ if __name__ == "__main__":
 
     print("Testing Map Complexity...")
     sarsa_dict, q_dict = test_map_complexity(maps=maps)
-    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
-    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
+    print_results("Map Complexity Results", sarsa_dict, q_dict)
 
     print("Testing Exploration Rate...")
     sarsa_dict, q_dict = test_exploration_rate()
     sars_exp_rate, _ = get_best_acc(sarsa_dict)
     q_exp_rate, _ = get_best_acc(q_dict)
-    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
-    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
+    print_results("Exploration Rate Results", sarsa_dict, q_dict)
 
     print("Testing Discount Value...")
     sarsa_dict, q_dict = test_discount_value()
     sars_disc, _ = get_best_acc(sarsa_dict)
     q_disc, _ = get_best_acc(q_dict)
-    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
-    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
+    print_results("Discount Value Results", sarsa_dict, q_dict)
 
     print("Testing Reward Strategy...")
-    sarsa_dict, q_dict = test_reward_strategy(epsilons=(sars_exp_rate, q_exp_rate), 
-                                              gammas=(sars_disc, q_disc),
-                                              )
-    print(f"sarsa_dict = {sarsa_dict}, q_dict = {q_dict}")
-    print(f"sarsa best: {get_best_acc(sarsa_dict)}; q best: {get_best_acc(q_dict)}")
+    sarsa_dict, q_dict = test_reward_strategy(
+        epsilons=(sars_exp_rate, q_exp_rate),
+        gammas=(sars_disc, q_disc),
+    )
+    print_results("Reward Strategy Results", sarsa_dict, q_dict)
