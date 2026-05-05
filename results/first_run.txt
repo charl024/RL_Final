@@ -1,0 +1,96 @@
+# test_exploration_rate
+EPISODES_EXPL_RATE = 10000
+MAX_STEPS_EXPL_RATE = 200
+# test_discount_value
+EPISODES_DISCOUNT_VALUE = 10000
+MAX_STEPS_DISCOUNT_VALUE = 200
+# test_map_complexity
+EPISODES_MAP_COMP = 10000
+MAX_STEPS_MAP_COMP = 200
+# test_reward_strategy, both sarsa and q-learning
+EPISODES_REWARD_STRAT_QLEARN = 10000
+MAX_STEPS_REWARD_STRAT_QLEARN = 200
+EPISODES_REWARD_STRAT_SARSA = 10000
+MAX_STEPS_REWARD_STRAT_SARSA = 200
+
+Map Complexity Results
+----------------------------------------------------------------------
+SARSA:
+                map1: (3.5187s, 1912032 steps, 10.275%)
+                map2: (3.5314s, 1915440 steps, 5.921%)
+                map3: (3.6098s, 1950009 steps, 5.275%)
+                map4: (3.5834s, 1940941 steps, 4.848%)
+                hi: (3.6322s, 1964422 steps, 3.336%)
+                spiral: (3.7040s, 2000000 steps, 0.000%)
+
+Q-Learning:
+                map1: (5.3931s, 1878486 steps, 15.922%)
+                map2: (5.4333s, 1886028 steps, 9.813%)
+                map3: (5.6000s, 1940128 steps, 5.275%)
+                map4: (5.5365s, 1924152 steps, 7.879%)
+                hi: (5.6064s, 1950655 steps, 3.867%)
+                spiral: (5.7656s, 2000000 steps, 0.000%)
+
+
+        SARSA best: (map1, 10.275%)
+        Q-Learning best: (map1, 15.922%)
+
+----------------------------------------------------------------------
+Testing Exploration Rate...
+Exploration Rate Results
+----------------------------------------------------------------------
+SARSA:
+                0: (1.1363s, 596712 steps, 15.584%)
+                0.5: (3.6038s, 1944414 steps, 5.541%)
+                1: (3.6544s, 2000000 steps, 0.087%)
+
+Q-Learning:
+                0: (2.1663s, 739398 steps, 12.381%)
+                0.5: (5.5495s, 1919819 steps, 6.667%)
+                1: (5.6364s, 1999997 steps, 0.173%)
+
+
+        SARSA best: (0, 15.584%)
+        Q-Learning best: (0, 12.381%)
+
+----------------------------------------------------------------------
+Testing Discount Value...
+Discount Value Results
+----------------------------------------------------------------------
+SARSA:
+                0.1: (3.6134s, 1941924 steps, 4.848%)
+                0.5: (3.6066s, 1939715 steps, 3.550%)
+                1: (2.4338s, 1308225 steps, 21.645%)
+
+Q-Learning:
+                0.1: (5.5732s, 1943696 steps, 4.416%)
+                0.5: (5.5217s, 1925890 steps, 2.338%)
+                1: (3.6767s, 1274633 steps, 8.052%)
+
+
+        SARSA best: (1, 21.645%)
+        Q-Learning best: (1, 8.052%)
+
+----------------------------------------------------------------------
+Testing Reward Strategy...
+Reward Strategy Results
+----------------------------------------------------------------------
+SARSA:
+                ('reward_strategy_simple', 'map4'): (1.0776s, 561722 steps, 13.333%)
+                ('reward_strategy_simple', 'hi'): (1.1671s, 608666 steps, 12.509%)
+                ('reward_strategy_simple', 'spiral'): (2.6983s, 1413054 steps, 22.680%)
+                ('reward_strategy_distance_based', 'map4'): (1.0643s, 551784 steps, 22.165%)
+                ('reward_strategy_distance_based', 'hi'): (0.9818s, 508012 steps, 14.329%)
+                ('reward_strategy_distance_based', 'spiral'): (2.1508s, 1123242 steps, 40.265%)
+
+Q-Learning:
+                ('reward_strategy_simple', 'map4'): (1.7251s, 588992 steps, 10.043%)
+                ('reward_strategy_simple', 'hi'): (1.8000s, 613376 steps, 16.603%)
+                ('reward_strategy_simple', 'spiral'): (3.7041s, 1265791 steps, 42.219%)
+                ('reward_strategy_distance_based', 'map4'): (1.5509s, 527402 steps, 30.043%)
+                ('reward_strategy_distance_based', 'hi'): (1.5090s, 513162 steps, 19.484%)
+                ('reward_strategy_distance_based', 'spiral'): (3.1781s, 1083254 steps, 40.475%)
+
+
+        SARSA best: (('reward_strategy_distance_based', 'spiral'), 40.265%)
+        Q-Learning best: (('reward_strategy_simple', 'spiral'), 42.219%)
