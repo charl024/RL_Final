@@ -36,6 +36,10 @@ MAX_STEPS_REWARD_STRAT_QLEARN = 200
 EPISODES_REWARD_STRAT_SARSA = 10000
 MAX_STEPS_REWARD_STRAT_SARSA = 200
 
+# list of reward strategies
+strategies = [reward_strategy_simple, reward_strategy_distance_based, reward_strategy_distance_based_scaled,  reward_strategy_harsh_visited]
+
+
 def test_acc(agent, environment,  max_path_steps=500):
     """
     Test the accuracy of the agent's learned policy by generating a path from 
@@ -338,8 +342,6 @@ def test_reward_strategy(epsilons, gammas, maps=["map4", "hi", "spiral"]):
         "gamma": gammas[1],
         "max_steps": MAX_STEPS_REWARD_STRAT_QLEARN, # max size of an episode
     }
-
-    strategies = [reward_strategy_simple, reward_strategy_distance_based]
 
     sarsa_dict = {}
     q_learn_dict = {}
