@@ -11,6 +11,9 @@ class Environment():
         self.map = map_abstraction
         self.target_position = target_position
         self.reward_strategy = reward_strategy
+        self.num_obstacles = np.sum(map_abstraction == 0)
+
+        # print(self.num_obstacles)
 
         self.height = self.map.shape[0]
         self.width  = self.map.shape[1]
@@ -38,8 +41,12 @@ class Environment():
                     string.append(".")
             string.append("\n")
         return "".join(string)
-    
+
     def in_boundary(self, state):
+        x, y = state
+        return 0 <= x < self.width and 0 <= y < self.height
+
+    def is_obstacle(self, state):
         x, y = state
         return self.map[y][x] == 0
     
@@ -69,13 +76,13 @@ class Environment():
 
         self.visited_map[y][x] = 1
         
-        if (nx < 0 or nx >= self.width or ny < 0 or ny >= self.height):
+        if (not self.in_boundary((nx, ny))):
             # out of bounds, return current state and some negative reward
             reward = self.reward_strategy("boundary")
             # print("boundary hit")
             return (x, y), reward
 
-        elif (self.in_boundary((nx, ny))):
+        elif (self.is_obstacle((nx, ny))):
             # check obstacle: 0 value in map means obstacle
             reward = self.reward_strategy("obstacle")
             # print("obstacle hit")
@@ -114,7 +121,7 @@ class Environment():
 # env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
 # # env = Environment(map_abstraction=np.zeros((41, 40)), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
 # print(env)
-# # env.plot()
+# env.plot()
 
 # # (x, y)
 # # (0, 1),  # South, 0, Down
