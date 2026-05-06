@@ -20,14 +20,15 @@ def train_q_learning(
     epsilon=0.5, 
     gamma=0.5,
     alpha=0.1,
-    initial_state=(0,0),
     max_steps=200):
 
     step_count = 0
     
     for episode in range(episodes):
-        agent.environment.reset_visited()           
-        state = initial_state
+        agent.environment.reset_visited()    
+        num_valids = len(agent.environment.valid_states)
+        state_indx = rng.choice(num_valids)    
+        state = agent.environment.valid_states[state_indx]
 
         # iterate through steps
         for step in range(max_steps):
