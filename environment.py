@@ -18,6 +18,17 @@ class Environment():
         self.height = self.map.shape[0]
         self.width  = self.map.shape[1]
 
+        # An array of all valid starting positions
+        valid_states = []
+        for y in range(self.height):
+            for x in range(self.width):
+                if (((x, y) == self.target_position) or (self.map[y][x] == 0)):
+                    #invalid starting position
+                    continue
+                else:
+                    valid_states.append((x, y))
+        self.valid_states = valid_states
+
         self.visited_map = np.zeros(shape=(self.height, self.width))
 
         # list of actions an agent can perform in the environment
@@ -121,7 +132,8 @@ class Environment():
 # env = Environment(map_abstraction=map_abstraction.load_bmp_to_map("./map_bmps/map1.bmp"), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
 # # env = Environment(map_abstraction=np.zeros((41, 40)), target_position=(25,5), reward_strategy=reward_strategy.reward_strategy_simple)
 # print(env)
-# env.plot()
+# print(env.valid_states)
+# # env.plot()
 
 # # (x, y)
 # # (0, 1),  # South, 0, Down
