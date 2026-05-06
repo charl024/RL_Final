@@ -11,6 +11,7 @@ TODO: Thoughts for extra cred...
 
 import time
 import numpy as np
+import data as data_saver
 
 from environment import Environment
 from agent import Agent
@@ -502,24 +503,36 @@ if __name__ == "__main__":
     maps = ["map1", "map2", "map3", "map4", "hi", "spiral"]
 
     print("Testing Map Complexity...")
-    sarsa_dict, q_dict = test_map_complexity(maps=maps)
-    print_results("Map Complexity Results", sarsa_dict, q_dict)
+    sarsa_map_dict, q_map_dict = test_map_complexity(maps=maps)
+    print_results("Map Complexity Results", sarsa_map_dict, q_map_dict)
 
     print("Testing Exploration Rate...")
-    sarsa_dict, q_dict = test_exploration_rate()
-    sars_exp_rate, _ = get_best_acc(sarsa_dict)
-    q_exp_rate, _ = get_best_acc(q_dict)
-    print_results("Exploration Rate Results", sarsa_dict, q_dict)
+    sarsa_epsilon_dict, q_epsilon_dict = test_exploration_rate()
+    sars_exp_rate, _ = get_best_acc(sarsa_epsilon_dict)
+    q_exp_rate, _ = get_best_acc(q_epsilon_dict)
+    print_results("Exploration Rate Results", sarsa_epsilon_dict, q_epsilon_dict)
 
     print("Testing Discount Value...")
-    sarsa_dict, q_dict = test_discount_value()
-    sars_disc, _ = get_best_acc(sarsa_dict)
-    q_disc, _ = get_best_acc(q_dict)
-    print_results("Discount Value Results", sarsa_dict, q_dict)
+    sarsa_gamma_dict, q_gamma_dict = test_discount_value()
+    sars_disc, _ = get_best_acc(sarsa_gamma_dict)
+    q_disc, _ = get_best_acc(q_gamma_dict)
+    print_results("Discount Value Results", sarsa_gamma_dict, q_gamma_dict)
 
     print("Testing Reward Strategy...")
-    sarsa_dict, q_dict = test_reward_strategy(
+    sarsa_strat_dict, q_strat_dict = test_reward_strategy(
         epsilons=(sars_exp_rate, q_exp_rate),
         gammas=(sars_disc, q_disc),
     )
-    print_results("Reward Strategy Results", sarsa_dict, q_dict)
+    print_results("Reward Strategy Results", sarsa_strat_dict, q_strat_dict)
+
+    data_saver.save_data(sarsa_map_dict=sarsa_map_dict,
+                         q_map_dict=q_map_dict,
+                         sarsa_epsilon_dict=sarsa_epsilon_dict,
+                         q_epsilon_dict=q_epsilon_dict,
+                         sarsa_gamma_dict=sarsa_gamma_dict,
+                         q_gamma_dict=q_gamma_dict,
+                         sarsa_strat_dict=sarsa_strat_dict,
+                         q_strat_dict=q_strat_dict)
+    
+    # for dict in data_saver.load_data():
+    #     print(dict)
