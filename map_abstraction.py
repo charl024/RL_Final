@@ -64,7 +64,7 @@ def load_bmp_to_map(bmp_path, map_dim_width=40, map_dim_height=40):
 
     # print(resulting_map.shape)
 
-    return resulting_map
+    return 255 * (resulting_map > 127).astype(int)
 
 # load_bmp_to_map("./map_bmps/map1.bmp")
 # load_bmp_to_map("./map_bmps/map2.bmp")
