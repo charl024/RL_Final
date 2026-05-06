@@ -22,7 +22,6 @@ def train_sarsa(
     step_count = 0
     
     for episode in range(episodes):
-        agent.environment.reset_visited()      
         # init S  
         agent.environment.reset_visited()    
         num_valids = len(agent.environment.valid_states)
@@ -46,6 +45,16 @@ def train_sarsa(
             if (new_state is None and reward is None):
                 break
 
+            x, y = state
+            xp, yp = new_state
+
+            qsa = agent.q_table[y, x, action]
+
+            if new_state == agent.environment.target_position:
+                target = reward
+                agent.q_table[y, x, action] = qsa + alpha * (target - qsa)
+                break
+
             # choose A' using S'
             new_action = explore_or_exploit(
                 agent=agent, 
@@ -54,18 +63,14 @@ def train_sarsa(
                 rng=rng
             )
 
-            x, y = state
-            xp, yp = new_state
-            qsa = agent.q_table[y, x, action]
             qsap = agent.q_table[yp, xp, new_action]
-            agent.q_table[y, x, action] = qsa + alpha * (reward + gamma * qsap - qsa)
+            target = reward + gamma * qsap
+
+            agent.q_table[y, x, action] = qsa + alpha * (target - qsa)
 
             state = new_state
             action = new_action
 
-
-            if new_state == agent.environment.target_position:
-                break
     return step_count
 
 # from map_abstraction import load_bmp_to_map

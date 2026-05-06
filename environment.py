@@ -88,30 +88,27 @@ class Environment():
         self.visited_map[y][x] = 1
         
         if (not self.in_boundary((nx, ny))):
-            # out of bounds, return current state and some negative reward
             reward = self.reward_strategy("boundary")
-            # print("boundary hit")
             return (x, y), reward
 
         elif (self.is_obstacle((nx, ny))):
-            # check obstacle: 0 value in map means obstacle
             reward = self.reward_strategy("obstacle")
-            # print("obstacle hit")
             return (x, y), reward
 
         elif (nx, ny) == self.target_position:
-            # check target reached
             reward = self.reward_strategy("target")
-            # print("target hit")
-        
-        elif (self.is_visited((nx, ny))):
+
+        elif (
+            getattr(self.reward_strategy, "uses_visited", False) and 
+            self.is_visited((nx, ny))
+        ):
             reward = self.reward_strategy("visited")
 
         else:
             tx, ty = self.target_position
             dist = abs(nx - tx) + abs(ny - ty)
             reward = self.reward_strategy(dist)
-        
+
         return (nx, ny), reward
 
     def reset_visited(self):
