@@ -122,7 +122,8 @@ def test_acc(agent, environment,  max_path_steps=500):
     Test the accuracy of the agent's learned policy by generating a path from 
     each possible initial position and checking if it reaches the target without 
     hitting obstacles.
-    THIS IS NOT USED CURRENTLY (USING path_stats() instead)
+
+    THIS IS NOT USED CURRENTLY (using path_stats() instead)
 
     RETURN - test accuracy (percentage of valid paths)
     """
