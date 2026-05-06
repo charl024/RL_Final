@@ -51,10 +51,16 @@ def train_q_learning(
             xp, yp = new_state
             # get Q(S, A)
             qsa = agent.q_table[y, x, action]
-            # get max_a(S', a)
-            max_a = np.max(agent.q_table[yp, xp])
+
+            if new_state == agent.environment.target_position:
+                target = reward
+            else:
+                max_a = np.max(agent.q_table[yp, xp])
+                target = reward + gamma * max_a
+
             # update Q(S, A)
-            agent.q_table[y, x, action] = qsa + alpha * (reward + gamma * max_a - qsa)
+            agent.q_table[y, x, action] = qsa + alpha * (target - qsa)
+
             # S <- S'
             state = new_state
 
