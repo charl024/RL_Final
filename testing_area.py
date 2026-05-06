@@ -22,22 +22,28 @@ from sarsa import train_sarsa
 TARGET_POSITION = (21, 23)
 
 # test_exploration_rate
-EPISODES_EXPL_RATE = 10000
+EPISODES_EXPL_RATE = 1000
 MAX_STEPS_EXPL_RATE = 200
 # test_discount_value
-EPISODES_DISCOUNT_VALUE = 10000
+EPISODES_DISCOUNT_VALUE = 1000
 MAX_STEPS_DISCOUNT_VALUE = 200
 # test_map_complexity
-EPISODES_MAP_COMP = 10000
+EPISODES_MAP_COMP = 1000
 MAX_STEPS_MAP_COMP = 200
 # test_reward_strategy, both sarsa and q-learning
-EPISODES_REWARD_STRAT_QLEARN = 10000
+EPISODES_REWARD_STRAT_QLEARN = 1000
 MAX_STEPS_REWARD_STRAT_QLEARN = 200
-EPISODES_REWARD_STRAT_SARSA = 10000
+EPISODES_REWARD_STRAT_SARSA = 1000
 MAX_STEPS_REWARD_STRAT_SARSA = 200
 
 # list of reward strategies
-strategies = [reward_strategy_simple, reward_strategy_distance_based, reward_strategy_distance_based_scaled,  reward_strategy_harsh_visited]
+strategies = [
+    reward_strategy_simple,
+    reward_strategy_distance_based,
+    reward_strategy_distance_based_scaled,
+    reward_strategy_visited,
+    reward_strategy_harsh_visited,
+]
 
 def path_stats(agent, environment,  max_path_steps=500):
     """
@@ -77,10 +83,7 @@ def path_stats(agent, environment,  max_path_steps=500):
             environment.reset_visited()
 
             for _ in range(max_path_steps):
-                if state == environment.target_position:
-                    path_valid = True
-                    break
-
+  
                 action = agent.exploit(state)
                 new_state, reward = environment.update(state, action)
 
@@ -96,6 +99,11 @@ def path_stats(agent, environment,  max_path_steps=500):
                     break
 
                 state = new_state
+
+                if state == environment.target_position:
+                    path_valid = True
+                    break
+
                 path_length += 1
 
             if path_valid:
