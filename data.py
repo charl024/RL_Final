@@ -47,8 +47,4 @@ def save_data(
 def load_data():
     # Saving to a file
     with open(save_path, 'r') as f:
-        data = json.load(f)
-
-    data_list = [v for v in data.values()]
-
-    return data_list
+        return json.load(f)
