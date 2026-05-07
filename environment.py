@@ -123,6 +123,16 @@ class Environment():
         plt.title("Environment Map")
         plt.show()
 
+    def plot_and_save(self, save_name):
+        plt.imshow(self.map, cmap="gray_r")
+
+        target_x, target_y = self.target_position
+        plt.scatter(target_x, target_y, c="red", label="target")
+
+        plt.title("Environment Map")
+        plt.savefig(f"map_environments/{save_name}.svg")
+        plt.show()
+
 # import map_abstraction
 # import reward_strategy
 # import numpy as np

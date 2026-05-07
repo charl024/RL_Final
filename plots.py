@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from data import load_data
+from testing_area import create_environments
 
 def generate_plots():
     dict = load_data()
@@ -61,21 +62,13 @@ def generate_plots():
 
         plt.savefig(f"box_plots/{test_name.replace(" ","_")}.svg")
         plt.show()
-    
-# # Your pre-calculated statistics
-# stats = [{
-#     'label': 'My Dataset',  # Name for the x-axis
-#     'whislo': 5,            # Minimum
-#     'q1': 10,               # 1st Quartile
-#     'med': 20,              # Median (Q2)
-#     'q3': 30,               # 3rd Quartile
-#     'whishi': 35,           # Maximum
-#     'fliers': []            # Outliers (empty if none)
-# }]
 
-# fig, ax = plt.subplots()
-# ax.bxp(stats)  # Draw the boxplot from pre-calculated stats
-# ax.set_title('Boxplot from Summary Statistics')
-# plt.show()
+def save_maps():
+    maps = ["hi", "map1", "map2", "map3", "map4", "spiral"]
+    envs = create_environments(maps)
 
+    for i, env in enumerate(envs):
+        env.plot_and_save(maps[i])
+
+# save_maps()
 generate_plots()
