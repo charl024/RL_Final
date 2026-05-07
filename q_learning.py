@@ -1,6 +1,7 @@
 # put q_learning related functions here
 
 import numpy as np
+from tqdm import tqdm
 
 from environment import Environment
 from agent import Agent
@@ -24,7 +25,7 @@ def train_q_learning(
 
     step_count = 0
     
-    for episode in range(episodes):
+    for episode in tqdm(range(episodes)):
         agent.environment.reset_visited()    
         num_valids = len(agent.environment.valid_states)
         state_indx = rng.choice(num_valids)    

@@ -1,5 +1,6 @@
 # put sarsa related functions here
 import numpy as np
+from tqdm import tqdm
 
 from environment import Environment
 from agent import Agent
@@ -21,7 +22,7 @@ def train_sarsa(
 
     step_count = 0
     
-    for episode in range(episodes):
+    for episode in tqdm(range(episodes)):
         # init S  
         agent.environment.reset_visited()    
         num_valids = len(agent.environment.valid_states)
