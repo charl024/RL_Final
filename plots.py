@@ -96,12 +96,12 @@ def generate_plots(save_fig=False):
                 plt.savefig(f"box_plots/{test_name.replace(" ","_")}.svg")
             plt.show()
 
-def save_maps():
+def plot_maps():
     maps = ["hi", "map1", "map2", "map3", "map4", "spiral"]
     envs = create_environments(maps)
 
     for i, env in enumerate(envs):
-        env.plot_and_save(maps[i])
+        env.plot()
 
-# save_maps()
+plot_maps()
 generate_plots()
